@@ -1,0 +1,16 @@
+import { defineApp } from "convex/server";
+import presence from "@convex-dev/presence/convex.config.js";
+import staticHosting from "@convex-dev/static-hosting/convex.config";
+import rateLimiter from "@convex-dev/rate-limiter/convex.config";
+import agent from "@convex-dev/agent/convex.config";
+import firecrawl from "@firecrawl/firecrawl-convex/convex.config";
+import agentmail from "@agentmail/convex/convex.config";
+import { v } from "convex/values";
+const app = defineApp({ env: { FIRECRAWL_API_KEY: v.string(), AGENTMAIL_API_KEY: v.string() } });
+app.use(presence);
+app.use(staticHosting);
+app.use(rateLimiter);
+app.use(agent);
+app.use(firecrawl, { env: { FIRECRAWL_API_KEY: app.env.FIRECRAWL_API_KEY } });
+app.use(agentmail, { env: { AGENTMAIL_API_KEY: app.env.AGENTMAIL_API_KEY } });
+export default app;

@@ -1,0 +1,27 @@
+diff --git a/node_modules/@agentmail/convex/dist/component/convex.config.js b/node_modules/@agentmail/convex/dist/component/convex.config.js
+index 3d15ed6..bb40624 100644
+--- a/node_modules/@agentmail/convex/dist/component/convex.config.js
++++ b/node_modules/@agentmail/convex/dist/component/convex.config.js
+@@ -1,6 +1,7 @@
+ import { defineComponent } from "convex/server";
++import { v } from "convex/values";
+ import workpool from "@convex-dev/workpool/convex.config";
+-const component = defineComponent("agentmail");
++const component = defineComponent("agentmail", { env: { AGENTMAIL_API_KEY: v.string(), AGENTMAIL_BASE_URL: v.optional(v.string()) } });
+ component.use(workpool, { name: "sendPool" });
+ component.use(workpool, { name: "callbackPool" });
+ export default component;
+diff --git a/node_modules/@agentmail/convex/src/component/convex.config.ts b/node_modules/@agentmail/convex/src/component/convex.config.ts
+index b1cc7f1..784f51e 100644
+--- a/node_modules/@agentmail/convex/src/component/convex.config.ts
++++ b/node_modules/@agentmail/convex/src/component/convex.config.ts
+@@ -1,7 +1,8 @@
+ import { defineComponent } from "convex/server";
++import { v } from "convex/values";
+ import workpool from "@convex-dev/workpool/convex.config";
+ 
+-const component = defineComponent("agentmail");
++const component = defineComponent("agentmail", { env: { AGENTMAIL_API_KEY: v.string(), AGENTMAIL_BASE_URL: v.optional(v.string()) } });
+ component.use(workpool, { name: "sendPool" });
+ component.use(workpool, { name: "callbackPool" });
+ 

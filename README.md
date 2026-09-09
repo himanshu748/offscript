@@ -4,6 +4,8 @@ A two-player browser mystery with private clues, live shared discoveries and a j
 
 Play: **[OFFSCRIPT](https://flexible-kiwi-480.convex.site/)** — frontend and production backend hosted on Convex.
 
+Source: [himanshu748/offscript](https://github.com/himanshu748/offscript), published on the main branch. Launch drafts, storyboards and recordings are excluded.
+
 New rooms contain a three-challenge cooperative case. Recover the dispatch, decode a room-specific cipher, cross-check altered relay logs, then agree on one of two endings. Optional Firecrawl source checks and an OpenAI character conversation work alongside the deterministic puzzles. An opt-in AgentMail debrief follows the ending; inbound email does not unlock gameplay. This is not a completed hackathon submission.
 
 ## Realtime and replay

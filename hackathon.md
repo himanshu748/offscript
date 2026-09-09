@@ -2,6 +2,8 @@
 
 ## Current status — September 9, 2026
 
+Public source release verified: https://github.com/himanshu748/offscript, main branch, initial commit 8a4575b. GitHub reports PUBLIC and the remote tree contains app source and this build log, without launch scripts, storyboards, recordings or environment secrets. The staged secret scan flagged only two explicit dummy keys in mocked recovery tests; no other known-pattern findings or omitted files. This check does not cover unknown credential formats.
+
 Fresh audit checks: 27 engine/narrative tests and 46 backend tests passed (73 total); TypeScript/Vite build passed; public root returned HTTP 200. These checks did not repeat production gameplay or provider delivery. Documentation changes are local and no deployment or social publication occurred in this audit.
 
 Live app: https://flexible-kiwi-480.convex.site/. New cases have three deterministic cooperative puzzles, earned testimony, consensus endings, saved accounts and recovery, friends, optional source checks, AI guidance, outbound debriefs and opt-in WebRTC voice. Voice uses STUN without TURN and is not guaranteed across restrictive networks. No inbound email unlock is shipped for new cases.

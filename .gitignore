@@ -30,3 +30,10 @@ snapshots/
 *.wav
 *.mp3
 *.log
+
+# Keep future campaign drafts and production plans local too.
+/local-marketing/
+/storyboards/
+/social-draft.md
+/social-drafts.md
+/docs/archive/social-draft.md

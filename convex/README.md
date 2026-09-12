@@ -7,7 +7,7 @@ Current module guide, September 9, 2026. Setup and provider limits are in ../REA
 | auth.ts, auth.config.ts, liveIdentity.ts | Convex Auth providers and server-derived identity. |
 | accounts.ts, accountLinking.ts | Save a guest identity and restore password-based access. |
 | recovery.ts, recoveryMail.ts | Verified recovery email, expiring single-use codes and AgentMail delivery. |
-| rooms.ts, validators.ts | Membership, private projections and deterministic game transitions. |
+| rooms.ts, validators.ts | Membership, private projections, deterministic game transitions and bounded private team messages. |
 | players.ts, presence.ts | Player IDs, consent-based friendships, invitations and connection presence. |
 | caseServices.ts, caseWorkers.ts, servicePolicy.ts | Bounded Firecrawl checks, OpenAI dialogue and opt-in outbound debriefs. |
 | voice.ts, voiceTypes.ts | Room-private WebRTC signaling and expiring call state; no audio storage. |

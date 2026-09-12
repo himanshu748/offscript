@@ -1,11 +1,58 @@
 import { liveUserId as getAuthUserId } from "./liveIdentity";
 import { ConvexError, v } from "convex/values";
-import { mutation, query, internalMutation } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { mutation, query, internalMutation, type QueryCtx } from "./_generated/server";
+import { components, internal } from "./_generated/api";
+import { MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
 import type { Id } from "./_generated/dataModel";
 import { createCase, applyPlayerAction, viewFor, expireCase } from "../server/engine.mjs";
 import { playerAction, playerView } from "./validators";
 import { pairKey, profileFor, publicPlayer } from "./players";
+
+const chatLimits = new RateLimiter(components.rateLimiter, {
+  teamMessage: { kind: "token bucket", rate: 30, period: MINUTE, capacity: 6 },
+});
+
+async function chatMember(ctx: QueryCtx, roomId: Id<"rooms">) {
+  const userId = await getAuthUserId(ctx);
+  const room = await ctx.db.get(roomId);
+  if (!userId || !room?.state || (room.hostId !== userId && room.guestId !== userId))
+    throw new ConvexError("This conversation is not available to your session.");
+  return { userId, role: room.hostId === userId ? "archivist" as const : "operator" as const };
+}
+
+export const messages = query({
+  args: { roomId: v.id("rooms") },
+  returns: v.array(v.object({
+    id: v.id("teamMessages"), text: v.string(), sentAt: v.number(),
+    role: v.union(v.literal("archivist"), v.literal("operator")),
+  })),
+  handler: async (ctx, { roomId }) => {
+    await chatMember(ctx, roomId);
+    const rows = await ctx.db.query("teamMessages").withIndex("by_roomId", q => q.eq("roomId", roomId)).order("desc").take(100);
+    return rows.reverse().map(row => ({ id: row._id, text: row.text, sentAt: row._creationTime, role: row.role }));
+  },
+});
+
+export const sendMessage = mutation({
+  args: { roomId: v.id("rooms"), clientId: v.string(), text: v.string() },
+  returns: v.id("teamMessages"),
+  handler: async (ctx, { roomId, clientId, text: rawText }) => {
+    const { userId, role } = await chatMember(ctx, roomId);
+    if (!/^[a-zA-Z0-9-]{1,80}$/.test(clientId)) throw new ConvexError("Please retry this message.");
+    const text = rawText.trim();
+    if (!text || text.length > 500) throw new ConvexError("Write a message using 1–500 characters.");
+    const existing = await ctx.db.query("teamMessages")
+      .withIndex("by_roomId_and_userId_and_clientId", q => q.eq("roomId", roomId).eq("userId", userId).eq("clientId", clientId)).unique();
+    if (existing) return existing._id;
+    const limit = await chatLimits.limit(ctx, "teamMessage", { key: `${roomId}:${userId}` });
+    if (!limit.ok) throw new ConvexError("Give your partner a moment. Try again in a few seconds.");
+    const id = await ctx.db.insert("teamMessages", { roomId, userId, role, clientId, text });
+    // Keep the conversation bounded without deleting anyone's case progress.
+    const recent = await ctx.db.query("teamMessages").withIndex("by_roomId", q => q.eq("roomId", roomId)).order("desc").take(101);
+    if (recent.length > 100) await ctx.db.delete(recent[100]._id);
+    return id;
+  },
+});
 
 function boundedToken(value: string) {
   if (

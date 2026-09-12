@@ -14,6 +14,8 @@ Create a room → invite a partner → both ready up → share private clues →
 
 Guests can save their account with a password, keep a public player ID, add friends by mutual consent and resume saved cases. Recovery requires a previously verified private email address. Opt-in two-person WebRTC voice includes mute, speaking indicators and leave/rejoin. It uses STUN without TURN: restrictive networks may fail. Audio is neither recorded nor sent to AI.
 
+Players can also compare clues in private team text chat. The latest 100 messages persist with their room; only its two joined players can read or send them. Team chat works without microphone permission and stays separate from the AI character and email debriefs.
+
 ## Sponsor responsibilities
 
 | Technology | Actual work |

@@ -30,6 +30,7 @@ import type { Action, Clue, PlayerView } from "../server/engine.mjs";
 import { PlayerPanel, type PublicPlayer } from "./PlayerPanel";
 import { CaseServices } from "./CaseServices";
 import { VoiceCall } from "./VoiceCall";
+import { TeamChat } from "./TeamChat";
 
 function storedRoom() {
   try {
@@ -469,7 +470,7 @@ export default function App() {
                 </span>
                 <span>
                   <Headphones size={17} />
-                  Optional room voice
+                  Text chat & optional voice
                 </span>
                 <span>
                   <LockKeyhole size={17} />
@@ -563,8 +564,8 @@ export default function App() {
                 <span className="step-number">02</span>Put it together.
               </h3>
               <p>
-                Join room voice or talk in person. Share your clues to pin them to
-                both desks.
+                Compare notes in team chat or opt into voice. Share your clues to
+                pin them to both desks.
               </p>
             </div>
             <div>
@@ -787,10 +788,9 @@ function Desk({
           <strong>{players[role]?.name ?? "Guest player"}</strong>
           <small>{players[role]?.playerId ?? "Player ID not created yet"}</small>
         </div>)}
-        <p>Room actions are attributed to these seats. Voice is optional and private to this room.</p>
+        <p>Use Team chat to compare notes. Room voice is optional.</p>
       </div>
       <CaseTrail view={view} />
-      <VoiceCall key={`voice-${roomId}`} roomId={roomId} connected={connected} />
       {view.clock && <section className={`signal-window ${secondsLeft !== null && secondsLeft <= 60 ? "urgent" : ""}`} aria-label="Signal window">
         <div>
           <span className="timer-label">{view.clock.expired ? "SIGNAL LOST" : view.phase === "resolved" ? "TIME REMAINING AT COMPLETION" : "SIGNAL WINDOW"}</span>
@@ -1049,6 +1049,8 @@ function Desk({
           )}
         </section>
       </div>
+      <TeamChat key={`chat-${roomId}`} roomId={roomId} role={view.role} connected={connected} />
+      <VoiceCall key={`voice-${roomId}`} roomId={roomId} connected={connected} />
       <CaseServices key={roomId} roomId={roomId} connected={connected} timed={Boolean(view.clock && view.phase !== "resolved" && !view.clock.expired)} />
       <section className="timeline" aria-labelledby="timeline-title">
         <h2 id="timeline-title">Case record.</h2>

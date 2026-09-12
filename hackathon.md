@@ -1,6 +1,12 @@
 # OFFSCRIPT — Convex All Gas build log
 
-## Current status — September 9, 2026
+## September 12, 2026 — play together without a microphone
+
+Added room-private team text chat. Only the two joined identities can read or write, roles come from the server, duplicate retries reuse their message, and the latest 100 messages stay with the room. Each message allows 500 characters, with an independent per-sender burst limit. A compact drawer shows unread partner messages and keeps unsent text during a connection interruption. Team conversation is separate from Mara and never enters model prompts or debrief emails. Optional voice now follows the core clue workspace instead of appearing before it.
+
+Verification: 27 engine/narrative tests and 51 backend tests passed (78 total); TypeScript and the Vite build passed. The first concurrent backend run hit only five-second test timeouts across old and new suites; rerunning with one worker and a 30-second test timeout passed every assertion. Development deployment quick-wren-892 accepted the two chat indexes and functions. Two isolated browser identities exchanged real messages in both directions, saw unread badges, and restored both messages after reloading. The 390×844 chat screenshot was visually checked. An extra puzzle-form check stopped at an existing Mission selector timeout; it is not recorded as a fresh full-case playthrough. No sponsor calls, third-party messages or production deployment occurred during these checks.
+
+## Previous status — September 9, 2026
 
 Public source release verified: https://github.com/himanshu748/offscript, main branch, initial commit 8a4575b. GitHub reports PUBLIC and the remote tree contains app source and this build log, without launch scripts, storyboards, recordings or environment secrets. The staged secret scan flagged only two explicit dummy keys in mocked recovery tests; no other known-pattern findings or omitted files. This check does not cover unknown credential formats.
 

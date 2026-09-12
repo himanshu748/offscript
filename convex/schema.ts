@@ -7,6 +7,14 @@ import { vOutboundId } from "@agentmail/convex";
 import { nullablePeer } from "./voiceTypes";
 export default defineSchema({
   ...authTables,
+  teamMessages: defineTable({
+    roomId: v.id("rooms"),
+    userId: v.id("users"),
+    clientId: v.string(),
+    text: v.string(),
+    role: v.union(v.literal("archivist"), v.literal("operator")),
+  }).index("by_roomId", ["roomId"])
+    .index("by_roomId_and_userId_and_clientId", ["roomId", "userId", "clientId"]),
   voiceRooms: defineTable({ roomId: v.id("rooms"), archivist: nullablePeer, operator: nullablePeer })
     .index("by_roomId", ["roomId"]),
   caseServices: defineTable({

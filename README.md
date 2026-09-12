@@ -6,7 +6,9 @@ Play: **[OFFSCRIPT](https://flexible-kiwi-480.convex.site/)** — frontend and p
 
 Source: [himanshu748/offscript](https://github.com/himanshu748/offscript), published on the main branch. Launch drafts, storyboards and recordings are excluded.
 
-New rooms contain a three-challenge cooperative case. Recover the dispatch, decode a room-specific cipher, cross-check altered relay logs, then agree on one of two endings. Optional Firecrawl source checks and an OpenAI character conversation work alongside the deterministic puzzles. An opt-in AgentMail debrief follows the ending; inbound email does not unlock gameplay. This is not a completed hackathon submission.
+New rooms contain a three-challenge cooperative case. Recover the dispatch, decode a room-specific cipher, cross-check altered relay logs, then agree on one of two endings. Optional Firecrawl source checks and an OpenAI character conversation work alongside the deterministic puzzles. An opt-in AgentMail debrief follows the ending; inbound email does not unlock gameplay.
+
+OFFSCRIPT has a [public Vibe Apps listing](https://vibeapps.dev/s/offscript), verified on September 12, 2026. Judging eligibility and results remain unverified.
 
 ## Realtime and replay
 
@@ -136,6 +138,6 @@ Local suite now includes thirteen service-policy/adapter tests, four narrative t
 
 A production probe caught the model reversing the historical launch order. Mara now gives reasoning guidance without repeating mission names or launch dates. A narrow server-side output check rejects those restatements, and only approved Agent message IDs appear in the UI, future conversation context or debrief. Unreviewed earlier responses are withheld. This is not a general-purpose fact checker: AI reasoning can still be wrong, so the cited documents and deterministic validator remain authoritative. No replacement model or automatic regeneration runs after rejection.
 
-Remaining: human playtest and submission materials. A gameplay-changing inbound character exchange remains a future feature, not part of the shipped debrief. Launch copy, storyboards, recordings and the working submission checklist are local-only and excluded from this repository. This source release does not establish a hackathon submission receipt.
+Remaining: independent human playtesting. A gameplay-changing inbound character exchange remains a future feature, not part of the shipped debrief. Launch copy, storyboards, recordings and the working submission checklist are local-only and excluded from this repository.
 
 Historical launch dates were checked against NASA's [Voyager 1](https://science.nasa.gov/mission/voyager/voyager-1/) and [Voyager 2](https://science.nasa.gov/mission/voyager/voyager-2/) pages on September 8, 2026. The listening station, dispatch puzzle, characters and recordings are fictional. NASA does not endorse this project. A source is labelled live-checked only after that case's actual Firecrawl check succeeds.

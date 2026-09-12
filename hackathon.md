@@ -1,5 +1,9 @@
 # OFFSCRIPT — Convex All Gas build log
 
+## September 12, 2026: public submission listing
+
+Verified OFFSCRIPT's [public Vibe Apps listing](https://vibeapps.dev/s/offscript) through the signed-in [author profile](https://vibeapps.dev/himanshu748). Corrected the README's obsolete submission status. This check establishes that the listing is public; judging eligibility and results remain unverified. Earlier build-log entries retain their historical submission status.
+
 ## September 12, 2026 — play together without a microphone
 
 Added room-private team text chat. Only the two joined identities can read or write, roles come from the server, duplicate retries reuse their message, and the latest 100 messages stay with the room. Each message allows 500 characters, with an independent per-sender burst limit. A compact drawer shows unread partner messages and keeps unsent text during a connection interruption. Team conversation is separate from Mara and never enters model prompts or debrief emails. Optional voice now follows the core clue workspace instead of appearing before it.

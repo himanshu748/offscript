@@ -58,7 +58,7 @@ export function TeamChat({ roomId, role, connected }: {
     {open && <section id="team-chat-panel" className="team-chat-panel" aria-labelledby="team-chat-title"
       onKeyDown={event => { if (event.key === "Escape") { event.preventDefault(); close(); } }}>
       <div className="team-chat-heading"><div><h2 id="team-chat-title">Talk to your partner</h2><p>Just your two seats · saved with this room</p></div>
-        <button type="button" className="chat-close" aria-label="Close team chat" onClick={close}><X size={19} /></button></div>
+        <button type="button" className="chat-close" aria-label="Close team chat" onClick={close}><X size={16} /></button></div>
       <div ref={log} className="team-chat-log" role="log" aria-label="Team messages" aria-live="polite" aria-relevant="additions text"
         onScroll={event => {
           const el = event.currentTarget;
@@ -84,13 +84,13 @@ export function TeamChat({ roomId, role, connected }: {
             }
           }} />
         <div className="team-chat-footer"><span>{connected ? `${text.length}/500` : "Reconnecting · your text stays here"}</span>
-          <button type="submit" disabled={!connected || busy || !text.trim()}><Send size={15} />{busy ? "Sending…" : "Send"}</button></div>
+          <button type="submit" disabled={!connected || busy || !text.trim()}><Send size={16} />{busy ? "Sending…" : "Send"}</button></div>
         {error && <p className="chat-error" role="status">{error}</p>}
         <p className="chat-privacy">Latest 100 messages. Team chat is not sent to Mara or included in email debriefs.</p>
       </form>
     </section>}
     <button ref={launcher} type="button" className="team-chat-launcher" aria-expanded={open} aria-controls="team-chat-panel" onClick={toggle}>
-      <MessageCircle size={21} /> Team chat {unread > 0 && <span className="chat-unread" aria-label={`${unread} unread messages`}>{unread > 99 ? "99+" : unread}</span>}
+      <MessageCircle size={16} /> Team chat {unread > 0 && <span className="chat-unread" aria-label={`${unread} unread messages`}>{unread > 99 ? "99+" : unread}</span>}
     </button>
   </aside>;
 }

@@ -1624,3 +1624,59 @@ footer {
 .transmission-record details { max-width: 76ch; color: #d3d8df; }
 .transmission-record .next-move { border-top: 1px solid #555c65; padding-top: 18px; margin: 16px 0 0; font-size: 14px; line-height: 1.6; }
 @keyframes tape-recover { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* Keep the active mystery quiet enough to read; blue stays on the landing. */
+.app.in-case { background: #181d22; min-height: 100dvh; --line: #424b53; }
+.in-case .case-main { max-width: 1200px; margin-inline: auto; }
+.in-case .desk-heading { padding-block: 24px; }
+.in-case .desk-heading h1 { font-size: clamp(32px, 4vw, 52px); }
+.room-details { border-block-start: 1px solid #424b53; padding-block: 16px; margin-block: 8px; }
+.room-details > summary { cursor: pointer; font-size: 14px; font-weight: 650; padding: 10px 0; min-height: 44px; }
+.room-details > summary:focus-visible { outline: 2px solid var(--lime); outline-offset: 4px; }
+.room-details .player-roster { margin: 0; padding-block: 16px; }
+.room-details .case-services { border: 0; margin-block: 8px; padding-top: 0; }
+.room-details .timeline { margin-block: 0; }
+.current-instruction { font-size: 16px; line-height: 1.65; padding: 20px 0; max-width: 72ch; color: #e0ed91; }
+.in-case .case-layout { margin-top: 8px; }
+.in-case .transmission-record { margin-block: 8px; padding: 20px 0; }
+.in-case .voice-call { margin-block: 16px; }
+.in-case .voice-disclosure { font-size: 12px; line-height: 1.7; }
+.in-case .voice-disclosure summary { cursor: pointer; padding-block: 8px; }
+.in-case .voice-disclosure p { max-width: 72ch; }
+.in-case .case-trail { margin-block: 12px; }
+@media (max-width: 600px) {
+  .in-case .desk-heading { padding-block: 16px; }
+  .in-case .desk-heading h1 { font-size: 34px; }
+  .current-instruction { font-size: 14px; padding-block: 14px; }
+}
+
+.in-case .back-link { margin-bottom: 8px; }
+.in-case .desk-heading { margin: 0 0 16px; padding-block: 8px; }
+.in-case .desk-heading p { margin-top: 10px; }
+.in-case .case-trail { padding-block: 14px; margin: 12px 0; }
+.in-case .team-strip { margin: 0; padding-block: 12px; font-size: 12px; border-color: #424b53; }
+@media (max-width: 600px) {
+  .in-case .desk-heading { gap: 10px; }
+  .in-case .phase { padding: 0; border: 0; }
+  .in-case .case-trail .stage-marker { width: 24px; height: 24px; min-width: 24px; }
+  .in-case .case-trail li { gap: 6px; }
+}
+
+/* Compact controls requested by the owner: vertical / horizontal. */
+.app button, .player-dialog button:not(.player-close), .player-dialog .player-close {
+  padding: 4px 8px;
+  min-height: 28px;
+  gap: 6px;
+  line-height: 20px;
+}
+.app button svg, .player-dialog button svg, .app svg.lucide, .player-dialog svg.lucide {
+  width: 16px; height: 16px; flex-shrink: 0;
+}
+.app .wordmark { padding: 4px 8px; }
+.app .share-button { width: auto; }
+.app .team-chat-launcher { padding: 4px 8px; min-height: 28px; }
+.app .room-details { padding-block: 6px; margin-block: 4px; }
+.app .room-details > summary { min-height: 28px; padding-block: 4px; }
+.app .voice-call { padding-block: 16px; }
+.app .empty-desk { min-height: 0; padding: 20px; }
+.app .empty-desk > svg { display: none; }

@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query, internalMutation, type QueryCtx } from "./_generated/server";
+import { action, mutation, query, internalMutation, type QueryCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { liveUserId } from "./liveIdentity";
@@ -104,5 +104,43 @@ export const expire = internalMutation({
       await ctx.db.patch(id, { [role]: null });
     }
     return null;
+  },
+});
+
+// Only joined room members may mint short-lived relay credentials.
+export const authorizeRelay = internalMutation({
+  args: { roomId: v.id("rooms"), clientId: v.string() }, returns: v.null(),
+  handler: async (ctx, { roomId, clientId }) => {
+    const role = await membership(ctx, roomId);
+    const row = await roomRow(ctx, roomId);
+    if (!active(row?.[role]) || row?.[role]?.clientId !== clientId)
+      throw new ConvexError("Join room voice before connecting audio.");
+    if (!(await limits.limit(ctx, "joins", { key: `relay:${roomId}:${role}` })).ok)
+      throw new ConvexError("Too many audio retries. Wait a minute.");
+    return null;
+  },
+});
+export const connectionConfig = action({
+  args: { roomId: v.id("rooms"), clientId: v.string() },
+  returns: v.object({ relay: v.boolean(), iceServers: v.array(v.object({ urls: v.array(v.string()), username: v.optional(v.string()), credential: v.optional(v.string()) })) }),
+  handler: async (ctx, args): Promise<{ relay: boolean; iceServers: { urls: string[]; username?: string; credential?: string }[] }> => {
+    await ctx.runMutation(internal.voice.authorizeRelay, args);
+    const key = process.env.TURN_KEY_ID, token = process.env.TURN_KEY_API_TOKEN;
+    if (!key || !token) return { relay: false, iceServers: [{ urls: ["stun:stun.cloudflare.com:3478"] }] };
+    try {
+      const response = await fetch(`https://rtc.live.cloudflare.com/v1/turn/keys/${encodeURIComponent(key)}/credentials/generate-ice-servers`, {
+        method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ ttl: 3600 }), signal: AbortSignal.timeout(10_000),
+      });
+      if (!response.ok) throw new Error("relay unavailable");
+      const body = await response.json();
+      if (!Array.isArray(body.iceServers)) throw new Error("invalid response");
+      const iceServers = body.iceServers.map((server: { urls: string | string[]; username?: string; credential?: string }) => ({
+        urls: (Array.isArray(server.urls) ? server.urls : [server.urls]).filter((url: string) => typeof url === "string" && /^(stun|turn|turns):/.test(url) && !/:53(?:\?|$)/.test(url)),
+        ...(server.username ? { username: server.username } : {}), ...(server.credential ? { credential: server.credential } : {}),
+      })).filter((server: { urls: string[] }) => server.urls.length);
+      if (!iceServers.some((server: { urls: string[]; credential?: string }) => server.credential && server.urls.some(url => /^turns?:/.test(url)))) throw new Error("no relay");
+      return { relay: true, iceServers };
+    } catch { throw new ConvexError("The voice relay is unavailable. Retry in a moment or use team chat."); }
   },
 });

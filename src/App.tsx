@@ -100,7 +100,7 @@ function ClueCard({ clue, shared = false }: { clue: Clue; shared?: boolean }) {
               rel="noopener noreferrer"
             >
               {source.title}
-              <ExternalLink size={13} />
+              <ExternalLink size={16} />
             </a>
           ))}
         </div>
@@ -197,7 +197,7 @@ function RolePreview() {
           className={`preview-paper archive-paper ${selected === "archivist" ? "selected" : ""}`}
         >
           <div className="preview-paper-type">
-            <FileText size={17} />
+            <FileText size={16} />
             <span>ARCHIVIST</span>
           </div>
           <h3>
@@ -207,7 +207,7 @@ function RolePreview() {
           </h3>
           <p>This desk holds the historical record.</p>
           <div className="sealed-evidence">
-            <LockKeyhole size={15} />
+            <LockKeyhole size={16} />
             <span>Clue opens in your room</span>
           </div>
           <span className="paper-index">ONE SIDE OF THE STORY</span>
@@ -216,7 +216,7 @@ function RolePreview() {
           className={`preview-paper operator-paper ${selected === "operator" ? "selected" : ""}`}
         >
           <div className="preview-paper-type">
-            <Headphones size={17} />
+            <Headphones size={16} />
             <span>OPERATOR</span>
           </div>
           <h3>
@@ -226,7 +226,7 @@ function RolePreview() {
           </h3>
           <p>This desk holds the instruction.</p>
           <div className="sealed-evidence">
-            <LockKeyhole size={15} />
+            <LockKeyhole size={16} />
             <span>Clue opens in your room</span>
           </div>
           <span className="paper-index">THE OTHER SIDE</span>
@@ -390,7 +390,7 @@ export default function App() {
       {active ? (
         <main id="main" className="case-main">
           <button className="back-link" onClick={() => setRoomId(null)}>
-            <ChevronLeft size={15} />
+            <ChevronLeft size={16} />
             Station home
           </button>
           {isLoading || !isAuthenticated || room === undefined ? (
@@ -460,20 +460,18 @@ export default function App() {
               </h1>
               <p className="hero-deck">Your friend has the rest.</p>
               <p className="hero-description">
-                Recover a lost dispatch. Break a rotating cipher. Catch the altered
-                relay logs. Three challenges, two private desks—and a decision
-                neither of you can make alone.
+                A two-player mystery. Share clues, solve three puzzles, and choose an ending together.
               </p>
               <div className="case-facts">
                 <span>
-                  <Users size={17} />2 players
+                  <Users size={16} />2 players
                 </span>
                 <span>
-                  <Headphones size={17} />
+                  <Headphones size={16} />
                   Text chat & optional voice
                 </span>
                 <span>
-                  <LockKeyhole size={17} />
+                  <LockKeyhole size={16} />
                   Private room
                 </span>
               </div>
@@ -501,7 +499,7 @@ export default function App() {
                 >
                   {busy ? (
                     <>
-                      <LoaderCircle className="spin" size={18} />
+                      <LoaderCircle className="spin" size={16} />
                       Connecting your desk…
                     </>
                   ) : (
@@ -509,7 +507,7 @@ export default function App() {
                       {invite
                         ? "Take the operator’s seat"
                         : "Open a private room"}
-                      <ArrowUpRight size={22} />
+                      <ArrowUpRight size={16} />
                     </>
                   )}
                 </button>
@@ -532,7 +530,7 @@ export default function App() {
                       disabled={busy}
                       onClick={() => setRoomId(storedRoom())}
                     >
-                      <RotateCcw size={14} />
+                      <RotateCcw size={16} />
                       Return to my last room
                     </button>
                   )
@@ -640,7 +638,7 @@ function WaitingRoom({
               onFocus={(e) => e.target.select()}
             />
             <button className="primary" onClick={copy}>
-              {copied ? <Check size={18} /> : <Copy size={18} />}
+              {copied ? <Check size={16} /> : <Copy size={16} />}
               {copied ? "Copied" : "Copy link"}
             </button>
           </div>
@@ -652,7 +650,7 @@ function WaitingRoom({
           </p>
         </div>
         <div className="privacy-note">
-          <LockKeyhole size={18} />
+          <LockKeyhole size={16} />
           <p>
             Only your partner needs the link. Your clue is kept on the server
             and only sent to your authenticated session.
@@ -663,17 +661,17 @@ function WaitingRoom({
         <Signal />
         <div className="seat-row">
           <span>
-            <FileText size={21} />
+            <FileText size={16} />
             ARCHIVIST
           </span>
           <strong>
-            <Check size={15} />
+            <Check size={16} />
             You’re here
           </strong>
         </div>
         <div className="seat-row empty">
           <span>
-            <Headphones size={21} />
+            <Headphones size={16} />
             OPERATOR
           </span>
           <strong>Waiting for partner</strong>
@@ -782,14 +780,6 @@ function Desk({
                 : "Decision open"}
         </div>
       </div>
-      <div className="player-roster" aria-label="Players in this room">
-        {(["archivist", "operator"] as const).map(role => <div key={role}>
-          <span>{role}{view.role === role ? " · You" : " · Partner"}</span>
-          <strong>{players[role]?.name ?? "Guest player"}</strong>
-          <small>{players[role]?.playerId ?? "Player ID not created yet"}</small>
-        </div>)}
-        <p>Use Team chat to compare notes. Room voice is optional.</p>
-      </div>
       <CaseTrail view={view} />
       {view.clock && <section className={`signal-window ${secondsLeft !== null && secondsLeft <= 60 ? "urgent" : ""}`} aria-label="Signal window">
         <div>
@@ -807,7 +797,7 @@ function Desk({
           </> : view.clock.expired ? <>
             <h2>The window closed.</h2>
             <p>The station went silent before you agreed on an ending. Your discoveries are saved, but this attempt is over.</p>
-            <button className="primary" disabled={!connected} onClick={onReplay}>Try a fresh case <RotateCcw size={18} /></button>
+            <button className="primary" disabled={!connected} onClick={onReplay}>Replay with new codes <RotateCcw size={16} /></button>
           </> : <>
             <h2>{view.phase === "resolved" ? "You beat the signal." : secondsLeft !== null && secondsLeft <= 60 ? "Final minute. Make it count." : "Keep the signal alive."}</h2>
             <p>{view.phase === "resolved" ? "Both players agreed before the station closed." : "Solve all three challenges, then agree on an ending. The clock keeps running through disconnects and reloads."}</p>
@@ -820,29 +810,12 @@ function Desk({
         </span>
         {view.challenge && <span>Team score {view.challenge.score}/100 · {view.challenge.mistakes} {view.challenge.mistakes === 1 ? "miss" : "misses"} · {view.challenge.hintsUsed} {view.challenge.hintsUsed === 1 ? "hint" : "hints"}</span>}
       </div>
-      {view.story && <section className="transmission-record" aria-labelledby="transmission-title">
-        <div className="transmission-heading">
-          <h2 id="transmission-title">The recovered tape</h2>
-          <span>{view.story.recovered} / 3 passages recovered · authored fiction</span>
-        </div>
-        <div className="tape-segments" aria-hidden="true">
-          {[1, 2, 3].map(segment => <span key={segment} className={view.story!.recovered >= segment ? "recovered" : ""} />)}
-        </div>
-        <div key={view.story.recovered} className="transmission-passage" aria-live="polite">
-          <h3>{view.story.passages.at(-1)?.title}</h3>
-          <p>{view.story.passages.at(-1)?.text}</p>
-        </div>
-        {view.story.passages.length > 1 && <details>
-          <summary>Read earlier passages</summary>
-          {view.story.passages.slice(0, -1).map(passage => <p key={passage.title}><strong>{passage.title}.</strong> {passage.text}</p>)}
-        </details>}
-        <p className="next-move"><strong>Next:</strong> {view.story.next}</p>
-      </section>}
+      {view.story && <p className="current-instruction"><strong>Next:</strong> {view.story.next}</p>}
       <div className="case-layout">
         <section className="private-desk" aria-labelledby="your-clue">
           <div className="section-heading">
-            <h2 id="your-clue">Your side of the story.</h2>
-            <LockKeyhole size={17} />
+            <h2 id="your-clue">Your clue</h2>
+            <LockKeyhole size={16} />
           </div>
           <ClueCard key={view.privateClue.id} clue={view.privateClue} />
           <button
@@ -854,35 +827,29 @@ function Desk({
           >
             {shared ? (
               <>
-                <Check size={18} />
+                <Check size={16} />
                 Pinned to both desks
               </>
             ) : (
               <>
-                <Share2 size={18} />
-                Share your clue with your partner
-                <ArrowRight size={18} />
+                <Share2 size={16} />
+                Share clue
+                <ArrowRight size={16} />
               </>
             )}
           </button>
-          <p className="desk-hint">
-            {shared
-              ? "Your partner can now read this clue. Compare the evidence together."
-              : "Read this first, then share it. Your partner has something you don’t."}
-          </p>
         </section>
         <section className="shared-desk" aria-labelledby="shared-title">
           <div className="section-heading">
-            <h2 id="shared-title">The shared desk.</h2>
+            <h2 id="shared-title">Shared clues</h2>
             <span>{view.contributions.length} / 2 CLUES</span>
           </div>
           {view.sharedClues.length === 0 ? (
             <div className="empty-desk">
-              <Share2 size={28} />
-              <h3>The middle of the story is missing.</h3>
+              <Share2 size={16} />
+              <h3>No clues shared yet.</h3>
               <p>
-                Share your clue to start connecting the two sides. Your
-                partner’s discovery will appear here when they share theirs.
+                Both shared clues appear here.
               </p>
             </div>
           ) : (
@@ -891,7 +858,7 @@ function Desk({
                 clue.id === view.privateClue.id ? (
                   <details key={clue.id} className="shared-own">
                     <summary>
-                      <Check size={17} />
+                      <Check size={16} />
                       <span>Your clue is on both desks</span>
                       <span className="disclosure-label">View copy</span>
                     </summary>
@@ -912,7 +879,7 @@ function Desk({
           {view.phase === "investigating" && (
             <form className="dispatch" onSubmit={submit}>
               <div className="dispatch-heading">
-                <Radio size={20} />
+                <Radio size={16} />
                 <h3>{view.challenge?.title ?? "Reconstruct the dispatch."}</h3>
               </div>
               <p>
@@ -967,7 +934,7 @@ function Desk({
                 )}
                 <button className="primary" type="submit">
                   {busy ? "Checking the evidence…" : view.challenge && view.challenge.index > 0 ? "Check the answer" : "Check the dispatch"}
-                  <ArrowRight size={18} />
+                  <ArrowRight size={16} />
                 </button>
               </fieldset>
               {view.challenge && <div className="hint-panel">
@@ -979,14 +946,14 @@ function Desk({
           )}
           {view.phase === "awaiting-reply" && (
             <div className="chapter-end" role="status">
-              <Check size={26} />
+              <Check size={16} />
               <h3>You found the right dispatch.</h3>
               <p>
                 Your joint progress is saved. The next chapter needs a character
                 email reply, and that integration isn’t connected yet.
               </p>
               <p className="honest-status">
-                <LockKeyhole size={15} />
+                <LockKeyhole size={16} />
                 No email was sent. The final decision stays locked.
               </p>
             </div>
@@ -1037,7 +1004,7 @@ function Desk({
               {view.challenge && <>
                 <p>Three challenges solved. Team score: {view.challenge.score}/100.
                   New rooms vary the cipher and relay, not the dispatch warm-up.</p>
-                <button className="primary" disabled={!connected} onClick={onReplay}>Open a fresh case <RotateCcw size={18} /></button>
+                <button className="primary" disabled={!connected} onClick={onReplay}>Replay with new codes <RotateCcw size={16} /></button>
                 <p className="field-hint">Creates a new room and invitation. Your partner must join again. Five rooms per guest per day.</p>
               </>}
             </div>
@@ -1049,10 +1016,41 @@ function Desk({
           )}
         </section>
       </div>
+      <details className="room-details"><summary>Your team</summary><div className="player-roster" aria-label="Players in this room">
+        {(["archivist", "operator"] as const).map(role => <div key={role}>
+          <span>{role}{view.role === role ? " · You" : " · Partner"}</span>
+          <strong>{players[role]?.name ?? "Guest player"}</strong>
+          <small>{players[role]?.playerId ?? "Player ID not created yet"}</small>
+        </div>)}
+        <p>Use Team chat to compare notes. Room voice is optional.</p>
+      </div>
+      </details>
+      <details className="room-details" open={view.phase === "decision" || view.phase === "resolved"}><summary>Recovered story{view.story ? ` · ${view.story.recovered}/3 passages` : ""}</summary>
+      {view.story && <section className="transmission-record" aria-labelledby="transmission-title">
+        <div className="transmission-heading">
+          <h2 id="transmission-title">The recovered tape</h2>
+          <span>{view.story.recovered} / 3 passages recovered · authored fiction</span>
+        </div>
+        <div className="tape-segments" aria-hidden="true">
+          {[1, 2, 3].map(segment => <span key={segment} className={view.story!.recovered >= segment ? "recovered" : ""} />)}
+        </div>
+        <div key={view.story.recovered} className="transmission-passage" aria-live="polite">
+          <h3>{view.story.passages.at(-1)?.title}</h3>
+          <p>{view.story.passages.at(-1)?.text}</p>
+        </div>
+        {view.story.passages.length > 1 && <details>
+          <summary>Read earlier passages</summary>
+          {view.story.passages.slice(0, -1).map(passage => <p key={passage.title}><strong>{passage.title}.</strong> {passage.text}</p>)}
+        </details>}
+
+      </section>}
+      </details>
       <TeamChat key={`chat-${roomId}`} roomId={roomId} role={view.role} connected={connected} />
       <VoiceCall key={`voice-${roomId}`} roomId={roomId} connected={connected} />
+      <details className="room-details"><summary>Archive tools · source checks, AI hints & debrief</summary>
       <CaseServices key={roomId} roomId={roomId} connected={connected} timed={Boolean(view.clock && view.phase !== "resolved" && !view.clock.expired)} />
-      <section className="timeline" aria-labelledby="timeline-title">
+      </details>
+      <details className="room-details"><summary>Case history</summary><section className="timeline" aria-labelledby="timeline-title">
         <h2 id="timeline-title">Case record.</h2>
         <div aria-live="polite">
           {view.timeline.length === 0 ? (
@@ -1070,7 +1068,7 @@ function Desk({
             </ol>
           )}
         </div>
-      </section>
+      </section></details>
     </>
   );
 }

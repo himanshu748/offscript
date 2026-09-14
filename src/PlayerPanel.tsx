@@ -59,12 +59,12 @@ export function PlayerPanel({ onInvite, onJoin, timed, onResume, onAccountSwitch
   const updates = pending.filter(f => f.incoming).length + (invitations?.length ?? 0);
   return <>
     <button className="player-menu-button" onClick={() => setOpen(true)}>
-      <Users size={17} /> Players & friends {updates > 0 && <span className="friend-badge">{updates}<span className="sr-only"> new requests or invitations</span></span>}
+      <Users size={16} /> Players & friends {updates > 0 && <span className="friend-badge">{updates}<span className="sr-only"> new requests or invitations</span></span>}
     </button>
     <dialog ref={dialog} className="player-dialog" onClose={() => setOpen(false)} aria-labelledby="players-title">
       <div className="player-dialog-heading">
         <div><span className="player-eyebrow">OFFSCRIPT / YOUR CONTACTS</span><h2 id="players-title">Find your other half.</h2></div>
-        <button className="player-close" aria-label="Close players and friends" onClick={() => setOpen(false)}><X size={22} /></button>
+        <button className="player-close" aria-label="Close players and friends" onClick={() => setOpen(false)}><X size={16} /></button>
       </div>
       <p className="player-note">Player IDs tell you who’s at the other desk. An ID alone never grants access to an account.</p>
       <AccountControls player={me ?? null} saved={account?.saved ?? false} onAccountSwitch={onAccountSwitch} />
@@ -76,7 +76,7 @@ export function PlayerPanel({ onInvite, onJoin, timed, onResume, onAccountSwitch
           <div className="player-id-row"><input id="public-player-id" value={me.playerId} readOnly onFocus={e => e.target.select()} /><button aria-label="Copy your player ID" disabled={busy} onClick={() => run(async () => {
             try { await navigator.clipboard.writeText(me.playerId); }
             catch { throw new ConvexError("Select the player ID and copy it manually."); }
-          }, "Player ID copied. Share it with a friend.")}><Copy size={18} /></button></div>
+          }, "Player ID copied. Share it with a friend.")}><Copy size={16} /></button></div>
           <form onSubmit={e => { e.preventDefault(); void run(() => rename({ name }), "Display name saved."); }}>
             <label htmlFor="player-name">Display name</label><div className="player-input-row"><input id="player-name" value={name} maxLength={24} minLength={2} required onChange={e => setName(e.target.value)} /><button disabled={busy || name.trim() === me.name}>Save name</button></div>
           </form>
@@ -87,7 +87,7 @@ export function PlayerPanel({ onInvite, onJoin, timed, onResume, onAccountSwitch
           <div className="player-input-row"><input id="friend-player-id" autoCapitalize="characters" autoComplete="off" spellCheck={false} placeholder="OS-XXXXXXXXXX" maxLength={13} required value={friendId} onChange={e => setFriendId(e.target.value.toUpperCase())} /><button disabled={busy || !friendId.trim()}>Send request</button></div>
         </form>
         {(invitations?.length ?? 0) > 0 && <section className="social-section" aria-label="Room invitations"><h3>Your desk is waiting</h3>{invitations!.map(invite => <article className="friend-row" key={invite.roomId}><div><strong>{invite.host.name}</strong><span>{invite.host.playerId} · {invite.timed ? "8-minute case" : "Practice"}</span></div><button disabled={busy} onClick={() => run(async () => { await onJoin(invite.inviteToken); setOpen(false); })}>Join room</button></article>)}</section>}
-        {pending.length > 0 && <section className="social-section" aria-label="Friend requests"><h3>Requests</h3>{pending.map(friend => <article className="friend-row" key={friend.id}><div><strong>{friend.player.name}</strong><span>{friend.player.playerId}</span><span>{friend.incoming ? "Wants to be your friend" : "Waiting for them to accept"}</span></div><div className="friend-actions">{friend.incoming && <button disabled={busy} onClick={() => run(() => respond({ id: friend.id, action: "accept" }), "You’re now friends.")}><Check size={15} />Accept</button>}<button disabled={busy} onClick={() => run(() => respond({ id: friend.id, action: "remove" }))}>{friend.incoming ? "Decline" : "Cancel request"}</button></div></article>)}</section>}
+        {pending.length > 0 && <section className="social-section" aria-label="Friend requests"><h3>Requests</h3>{pending.map(friend => <article className="friend-row" key={friend.id}><div><strong>{friend.player.name}</strong><span>{friend.player.playerId}</span><span>{friend.incoming ? "Wants to be your friend" : "Waiting for them to accept"}</span></div><div className="friend-actions">{friend.incoming && <button disabled={busy} onClick={() => run(() => respond({ id: friend.id, action: "accept" }), "You’re now friends.")}><Check size={16} />Accept</button>}<button disabled={busy} onClick={() => run(() => respond({ id: friend.id, action: "remove" }))}>{friend.incoming ? "Decline" : "Cancel request"}</button></div></article>)}</section>}
         <section className="social-section" aria-label="Your friends"><h3>Friends <span>{accepted.length}/50</span></h3>
           {friends === undefined ? <p>Loading your contacts…</p> : accepted.length === 0 ? <p className="player-note">No friends yet. Swap IDs with your partner to find each other next time.</p> : <p className="player-note">Invite opens a new {timed ? "eight-minute" : "practice"} case and reserves the second seat for that friend. Finish your current game before starting another.</p>}
           {accepted.map(friend => <article className="friend-row" key={friend.id}><div><strong>{friend.player.name}</strong><span>{friend.player.playerId}</span></div><div className="friend-actions"><button disabled={busy} onClick={() => run(async () => { await onInvite(friend.player.playerId); setOpen(false); })}>Invite to new room</button><button disabled={busy} onClick={() => run(() => respond({ id: friend.id, action: "remove" }), "Friend removed.")}>Remove</button></div></article>)}

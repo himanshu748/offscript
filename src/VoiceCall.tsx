@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { ConvexError } from "convex/values";
 import { Mic, MicOff, PhoneOff, Phone } from "lucide-react";
 import { api } from "../convex/_generated/api";
@@ -48,6 +48,8 @@ function useSpeaking(stream: MediaStream | null, enabled: boolean) {
 
 export function VoiceCall({ roomId, connected }: { roomId: Id<"rooms">; connected: boolean }) {
   const data = useQuery(api.voice.get, { roomId });
+  const getConfig = useAction(api.voice.connectionConfig);
+  const [network, setNetwork] = useState<{ relay: boolean; iceServers: RTCIceServer[] } | null>(null);
   const join = useMutation(api.voice.join), leave = useMutation(api.voice.leave);
   const heartbeat = useMutation(api.voice.heartbeat), send = useMutation(api.voice.describe);
   const [clientId, setClientId] = useState<string | null>(null);
@@ -67,7 +69,7 @@ export function VoiceCall({ roomId, connected }: { roomId: Id<"rooms">; connecte
     current?.stream.getTracks().forEach(track => track.stop());
     pc.current?.close(); pc.current = null;
     if (current) void leave({ roomId, clientId: current.id }).catch(() => {});
-    setClientId(null); setStream(null); setRemote(null); setMuted(false); mutedRef.current = false;
+    setClientId(null); setNetwork(null); setStream(null); setRemote(null); setMuted(false); mutedRef.current = false;
     setStatus("Voice is off"); setPlayBlocked(false);
   }
   const stopRef = useRef(stop); stopRef.current = stop;
@@ -84,12 +86,21 @@ export function VoiceCall({ roomId, connected }: { roomId: Id<"rooms">; connecte
       if (revision !== operation.current) { capture.getTracks().forEach(t => t.stop()); return; }
       const id = crypto.randomUUID();
       await join({ roomId, clientId: id });
-      if (revision !== operation.current) { capture.getTracks().forEach(t => t.stop()); void leave({ roomId, clientId: id }); return; }
+      if (revision !== operation.current) { capture.getTracks().forEach(t => t.stop()); void leave({ roomId, clientId: id }).catch(() => {}); return; }
+      live.current = { id, stream: capture };
+      const config = await getConfig({ roomId, clientId: id });
+      if (revision !== operation.current) { capture.getTracks().forEach(t => t.stop()); void leave({ roomId, clientId: id }).catch(() => {}); return; }
+      setNetwork(config);
       live.current = { id, stream: capture };
       capture.getAudioTracks().forEach(track => { track.onended = () => { stopRef.current(); setError("Your microphone disconnected. Check the device, then join again."); }; });
       setStream(capture); setClientId(id); setStatus("Waiting for your partner to join voice");
     } catch (cause) {
       capture?.getTracks().forEach(t => t.stop());
+      if (revision === operation.current) {
+        const current = live.current; live.current = null;
+        if (current) void leave({ roomId, clientId: current.id }).catch(() => {});
+        setNetwork(null);
+      }
       if (revision === operation.current) setError(cause instanceof ConvexError && typeof cause.data === "string" ? cause.data : "Microphone unavailable. Allow microphone access on this site and check your device. Voice requires HTTPS or localhost.");
     } finally { starting.current = false; setBusy(false); }
   }
@@ -111,19 +122,19 @@ export function VoiceCall({ roomId, connected }: { roomId: Id<"rooms">; connecte
     return () => clearTimeout(timer);
   }, [clientId, connected]);
   useEffect(() => {
-    if (!clientId || !stream || !peerId || !role) {
+    if (!clientId || !stream || !peerId || !role || !network) {
       if (clientId) setStatus("Waiting for your partner to join voice");
       return;
     }
     let disposed = false;
-    const connection = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.cloudflare.com:3478" }] });
+    const connection = new RTCPeerConnection({ iceServers: network.iceServers });
     pc.current = connection;
     setStatus("Connecting audio…");
     let disconnected: ReturnType<typeof setTimeout> | undefined;
     const timeout = setTimeout(() => fail(), 30_000);
     const fail = () => {
       if (disposed) return;
-      stopRef.current(); setError("Audio could not connect. This network may need a TURN relay, which is not configured. Rejoin to retry, or use a separate call.");
+      stopRef.current(); setError("Audio could not connect. Leave and rejoin voice on both devices, or continue in team chat.");
     };
     connection.onconnectionstatechange = () => {
       if (disposed) return;
@@ -143,7 +154,7 @@ export function VoiceCall({ roomId, connected }: { roomId: Id<"rooms">; connecte
       disposed = true; clearTimeout(timeout); clearTimeout(disconnected);
       connection.close(); if (pc.current === connection) pc.current = null; setRemote(null);
     };
-  }, [clientId, stream, peerId, role, roomId, send]);
+  }, [clientId, stream, peerId, role, roomId, send, network]);
 
   const incoming = data?.description?.sdp;
   useEffect(() => {
@@ -174,17 +185,17 @@ export function VoiceCall({ roomId, connected }: { roomId: Id<"rooms">; connecte
     if (clientId) void heartbeat({ roomId, clientId, muted: value }).catch(() => { stopRef.current(); setError("Voice disconnected. Rejoin to continue."); });
   }
   return <section className="voice-call" aria-labelledby="voice-title">
-    <div><h2 id="voice-title"><Phone size={19} /> Talk at your desks</h2>
-      <p>No recording or AI transcription. Your partner can hear you only after you both join.</p>
+    <div><h2 id="voice-title"><Phone size={16} /> Talk to your partner</h2>
+      <p>Both players join to talk.</p>
       <p className="voice-status" role="status">{status}{clientId && !connected ? " · station reconnecting" : ""}</p>
       {clientId && <div className="voice-speakers"><span data-speaking={ownSpeaking}>{muted ? "You · muted" : ownSpeaking ? "You · speaking" : "You · microphone on"}</span><span data-speaking={peerSpeaking}>{!peerId ? "Partner · voice off" : data?.peerMuted ? "Partner · muted" : peerSpeaking ? "Partner · speaking" : "Partner · joining / listening"}</span></div>}
     </div>
-    <div className="voice-controls">{clientId ? <><button onClick={toggleMute}>{muted ? <MicOff size={17} /> : <Mic size={17} />}{muted ? "Unmute" : "Mute"}</button><button onClick={stop}><PhoneOff size={17} /> Leave voice</button></> : <button disabled={busy || !connected || !data} onClick={() => void start()}><Mic size={17} />{busy ? "Opening microphone…" : "Join voice"}</button>}
+    <div className="voice-controls">{clientId ? <><button onClick={toggleMute}>{muted ? <MicOff size={16} /> : <Mic size={16} />}{muted ? "Unmute" : "Mute"}</button><button onClick={stop}><PhoneOff size={16} /> Leave voice</button></> : <button disabled={busy || !connected || !data} onClick={() => void start()}><Mic size={16} />{busy ? "Opening microphone…" : "Join voice"}</button>}
       {busy && <button onClick={() => { stop(); setStatus("Microphone request cancelled"); }}>Cancel</button>}
       {playBlocked && <button onClick={() => void audio.current?.play().then(() => setPlayBlocked(false)).catch(() => setError("Audio playback is blocked. Check your browser’s sound permission."))}>Play partner audio</button>}
     </div>
     {error && <p className="error" role="alert">{error}</p>}
-    <p className="voice-disclosure">Direct WebRTC audio · no TURN relay configured. Some work/mobile networks may not connect. Peer-to-peer calls can reveal your network address to your partner; join only with someone you trust. Connection metadata expires after you leave or stop responding. Calls end after 30 minutes.</p>
+    <details className="voice-disclosure"><summary>Voice connection & privacy</summary><p>{network?.relay ? "Relay fallback is available for restrictive networks." : "Direct connection only until the server relay is configured; some networks may not connect."} Both players must join. Calls end after 30 minutes. Audio is not recorded or sent to AI. Direct connections may reveal your network address to your partner.</p></details>
     <audio ref={audio} autoPlay aria-label="Partner audio" />
   </section>;
 }

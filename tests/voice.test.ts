@@ -65,3 +65,27 @@ test("expiry clears signaling and rejects late heartbeat without changing game s
     expect((await t.run(ctx => ctx.db.get(roomId)))?.state).toEqual(before?.state);
   } finally { vi.useRealTimers(); }
 });
+
+test("relay credentials require a current voice seat and never expose the provider key", async () => {
+  const { host, outsider, roomId, a } = await setup();
+  vi.stubEnv("TURN_KEY_ID", "test-key");
+  vi.stubEnv("TURN_KEY_API_TOKEN", "server-only-token");
+  const request = vi.fn().mockResolvedValue(new Response(JSON.stringify({ iceServers: [
+    { urls: ["turn:turn.cloudflare.com:3478?transport=udp", "turn:turn.cloudflare.com:53?transport=udp"], username: "temporary-user", credential: "temporary-password" },
+  ] }), { status: 201 }));
+  vi.stubGlobal("fetch", request);
+  try {
+    await expect(outsider.action(api.voice.connectionConfig, { roomId, clientId: a })).rejects.toThrow("players in this room");
+    await expect(host.action(api.voice.connectionConfig, { roomId, clientId: a })).rejects.toThrow("Join room voice");
+    expect(request).not.toHaveBeenCalled();
+    await host.mutation(api.voice.join, { roomId, clientId: a });
+    const config = await host.action(api.voice.connectionConfig, { roomId, clientId: a });
+    expect(config).toEqual({ relay: true, iceServers: [{ urls: ["turn:turn.cloudflare.com:3478?transport=udp"], username: "temporary-user", credential: "temporary-password" }] });
+    expect(JSON.stringify(config)).not.toContain("server-only-token");
+    expect(JSON.parse(request.mock.calls[0][1].body)).toEqual({ ttl: 3600 });
+    request.mockResolvedValue(new Response("denied", { status: 403 }));
+    await expect(host.action(api.voice.connectionConfig, { roomId, clientId: a })).rejects.toThrow("relay is unavailable");
+    await host.mutation(api.voice.leave, { roomId, clientId: a });
+    await expect(host.action(api.voice.connectionConfig, { roomId, clientId: a })).rejects.toThrow("Join room voice");
+  } finally { vi.unstubAllEnvs(); vi.unstubAllGlobals(); }
+});

@@ -49,7 +49,7 @@ Recovery was independently tested against both cloud development and production 
 
 **Optional two-person voice:** both players explicitly choose Join voice and grant microphone permission. WebRTC carries audio directly; Convex handles authenticated room-private offer/answer signaling, mute state and expiring call sessions. There is no recording, transcription or audio sent to an AI model. Mute, leave, speaking indicators and connection-error states are available. Calls stop after 30 minutes; signaling expires after a minute without heartbeats. Peer-to-peer calling can expose a network address to the other participant; invite someone you trust.
 
-Voice currently uses Cloudflare’s free STUN service, **not a TURN relay**. Some mobile, corporate and restrictive NAT networks will not connect; the UI states this limitation and does not claim universal calling. No paid account or relay plan was enabled. Browser tests with synthetic microphones are not physical-device or cross-network audio-quality tests.
+Voice supports Cloudflare TURN via server-only `TURN_KEY_ID` and `TURN_KEY_API_TOKEN` Convex environment variables. Without both, it uses STUN only. The September 14 production configuration check found no TURN keys. Some mobile, corporate and restrictive NAT networks will not connect; the UI states this limitation and does not claim universal calling. No paid account or relay plan was enabled. Browser tests with synthetic microphones are not physical-device or cross-network audio-quality tests.
 
 Mara also has explicit stage-nudge and ending-reflection actions. The server constructs the prompts from the current shared evidence, recovered testimony, score and ending; it rejects a reflection before consensus. These consume the existing six-turn case / forty-turn daily AI budget. No background model calls, new model fallback, or voice transcription were added. AI nudges are unscored advice, distinct from the deterministic scored hint.
 
@@ -141,3 +141,12 @@ A production probe caught the model reversing the historical launch order. Mara 
 Remaining: independent human playtesting. A gameplay-changing inbound character exchange remains a future feature, not part of the shipped debrief. Launch copy, storyboards, recordings and the working submission checklist are local-only and excluded from this repository.
 
 Historical launch dates were checked against NASA's [Voyager 1](https://science.nasa.gov/mission/voyager/voyager-1/) and [Voyager 2](https://science.nasa.gov/mission/voyager/voyager-2/) pages on September 8, 2026. The listening station, dispatch puzzle, characters and recordings are fictional. NASA does not endorse this project. A source is labelled live-checked only after that case's actual Firecrawl check succeeds.
+
+
+## Voice relay setup (September 14)
+
+Create a Cloudflare Realtime TURN key and store its key ID and API token in the **production Convex environment**, named `TURN_KEY_ID` and `TURN_KEY_API_TOKEN`. Do not put them in Vite variables or source control. The authenticated `voice.connectionConfig` action checks a live room voice seat and rate limits requests, then issues one-hour credentials for a call capped at thirty minutes. Only those temporary credentials reach the browser. Provider failures show a retry message; they do not silently fall back to direct-only audio when TURN is configured. See [Cloudflare's credential setup](https://developers.cloudflare.com/realtime/turn/generate-credentials/).
+
+The relay provider has not been provisioned or verified. A production configuration change and a relay-only two-device call remain required before claiming cross-network voice works.
+
+The September 14 interface puts the current clue and next action first, uses a quieter reading surface, and groups team details, recovered story, optional archive tools and case history behind expandable sections. Replay is labelled "Replay with new codes": the authored story and dispatch warm-up repeat; cipher and relay values vary per room. Firecrawl verifies the two fixed NASA sources and does not generate new stories.

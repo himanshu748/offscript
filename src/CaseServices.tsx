@@ -32,13 +32,13 @@ export function CaseServices({ roomId, connected, timed }: { roomId: Id<"rooms">
   if (!data) return <p className="field-hint">Loading the station line…</p>;
   return <section className="case-services" aria-labelledby="station-line-title">
     <div className="services-heading"><span className="eyebrow">{timed ? "OPTIONAL / YOUR CLOCK KEEPS RUNNING" : "OPTIONAL / TAKE YOUR TIME"}</span>
-      <h2 id="station-line-title">An open line to the archive.</h2>
-      <p>Check the history. Talk through the evidence. Neither service can solve a stage for the server or change your ending.</p>
+      <h2 id="station-line-title">Source checks & hints.</h2>
+      <p>Optional help for your current case. The game works without these tools.</p>
     </div>
     <div className="services-grid">
       <article className="source-service">
-        <h3><BookOpenCheck size={21} /> Check the dispatch’s history</h3>
-        <p>Firecrawl reads the two NASA mission pages and checks their launch dates. A successful check stays attached to this case.</p>
+        <h3><BookOpenCheck size={16} /> Check the dispatch’s history</h3>
+        <p>Firecrawl checks the two NASA launch dates used in the opening puzzle. It saves source receipts for this case; it does not generate a new story.</p>
         {data.sources.length > 0 ? <ul className="source-receipts">{data.sources.map(source => <li key={source.url}>
           <a href={source.url} target="_blank" rel="noreferrer">{source.title} ↗</a>
           <p>{source.excerpt}</p>
@@ -52,7 +52,7 @@ export function CaseServices({ roomId, connected, timed }: { roomId: Id<"rooms">
         {data.sourceError && <p className="service-error" role="status">{data.sourceError}</p>}
       </article>
       <article className="character-service">
-        <div className="character-heading"><h3><MessageCircle size={21} /> Mara Vale</h3><span>AI CHARACTER</span></div>
+        <div className="character-heading"><h3><MessageCircle size={16} /> Mara Vale</h3><span>AI CHARACTER</span></div>
         <p>An AI interpretation of Mara, separate from the recorded tape. She sees shared clues, recovered passages and this conversation—not sealed evidence. Your partner sees every message here.</p>
         <div ref={log} className="character-log" aria-label="Conversation with Mara" aria-live="polite" aria-relevant="additions text"
           onScroll={event => { const el = event.currentTarget; followLatest.current = el.scrollHeight - el.scrollTop - el.clientHeight < 48; }}>

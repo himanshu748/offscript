@@ -96,7 +96,7 @@ export function PlayerPanel({ onInvite, onJoin, timed, onResume, onAccountSwitch
       </>}
       {error && <p className="social-error" role="alert">{error}</p>}
       <p className="social-status" role="status">{busy ? "Saving…" : notice}</p>
-      <aside className="voice-note"><strong>Voice: bring your own call</strong><p>Use Discord, WhatsApp or another call while you play. OFFSCRIPT has no in-game voice, doesn’t access your microphone and doesn’t record audio.</p></aside>
+      <aside className="voice-note"><strong>Optional voice in your room</strong><p>Both players can choose Join voice in the case. Microphone access requires your permission; audio is never recorded. If your network blocks the call, use team chat or your usual calling app.</p></aside>
     </dialog>
   </>;
 }

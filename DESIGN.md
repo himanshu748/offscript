@@ -2,15 +2,15 @@
 name: OFFSCRIPT
 description: A cooperative mystery inside a listening station.
 colors:
-  blue: "#253bd6"
+  blue: "#36454f"
   ink: "#15191d"
   paper: "#f2efe3"
-  lime: "#e0ed91"
+  lime: "#c2cdb8"
   text: "#f7f5ec"
-  supporting-text: "#d3d8fb"
+  supporting-text: "#cbd3d4"
   line: "rgba(244, 245, 255, 0.24)"
   instrument-line: "#3a4146"
-  lime-hover: "#ecf5b9"
+  lime-hover: "#dce3d5"
 typography:
   display:
     fontFamily: "Barlow Condensed, sans-serif"
@@ -35,7 +35,7 @@ typography:
     fontFamily: "Manrope, sans-serif"
     fontWeight: 700
 rounded:
-  control: "2px"
+  control: "4px"
   instrument: "3px"
 spacing:
   compact: "8px"
@@ -50,18 +50,18 @@ components:
     textColor: "{colors.ink}"
     typography: "{typography.control}"
     rounded: "{rounded.control}"
-    padding: "14px 19px"
+    padding: "4px 8px"
   button-primary-hover:
     backgroundColor: "{colors.lime-hover}"
   button-text:
     backgroundColor: "transparent"
     textColor: "#e3e8dc"
-    padding: "12px 0"
+    padding: "4px 8px"
   button-share:
     backgroundColor: "{colors.lime}"
     textColor: "{colors.ink}"
     rounded: "{rounded.control}"
-    padding: "18px 20px"
+    padding: "4px 8px"
     width: "100%"
   clue-card:
     backgroundColor: "{colors.paper}"
@@ -106,12 +106,12 @@ Extracted from `src/styles.css`, `src/App.tsx`, `src/main.tsx` and the approved 
 
 ## Colors
 
-An ultramarine ground holds dark working instruments and warm reading surfaces, with a pale lime accent.
+A slate ground holds dark working instruments and warm reading surfaces, with a muted sage accent.
 
 ### Primary
 
-- **Station Ultramarine** (`blue`): the application field and blue focus treatment on paper.
-- **Signal Lime** (`lime`): primary actions, the signal trace, role emphasis and progress markers. The lighter hover variant belongs to action feedback.
+- **Station Slate** (`blue`): the application field and blue focus treatment on paper.
+- **Signal Sage** (`lime`): primary actions, the signal trace, role emphasis and progress markers. The lighter hover variant belongs to action feedback.
 
 ### Neutral
 
@@ -167,13 +167,13 @@ Depth comes primarily from material contrast. The implemented shadows are blurre
 
 ## Shapes
 
-Controls and documents use nearly square 2px corners; entry and waiting instruments use 3px corners. Thin solid rules define divisions. The empty shared desk uses a dashed outline to signal an unfilled area. Status dots are circular and accompanied by text. The signal is native SVG geometry: fine orbital ellipses, a circular center and a lime waveform.
+Controls use 4px corners and documents use nearly square 2px corners; entry and waiting instruments use 3px corners. Thin solid rules define divisions. The empty shared desk uses a dashed outline to signal an unfilled area. Status dots are circular and accompanied by text. The signal is native SVG geometry: fine orbital ellipses, a circular center and a lime waveform.
 
 ## Components
 
 ### Buttons
 
-Primary buttons use lime over ink, a small radius, generous horizontal alignment and an arrow or status icon. The base minimum height is 50px. Hover lightens the background and lifts by 2px over 0.18s; disabled actions reduce opacity. Text actions are underlined, transparent and quieter.
+Primary buttons use lime over ink, a small radius, generous horizontal alignment and an arrow or status icon. The base minimum height is 28px, with 4px vertical and 8px horizontal padding. Hover lightens the background and lifts by 2px over 0.18s; disabled actions reduce opacity. Text actions are underlined, transparent and quieter.
 
 The share action spans the paper width. After sharing, its background becomes deeper blue with lime text, an outline and a check icon; the text confirms that the clue is pinned to both desks.
 
@@ -199,7 +199,7 @@ The case-progress strip reports the three puzzle stages and current completion f
 
 September 9 extensions: recovered testimony stays readable and appears only after the server reveals it. Guided AI actions distinguish a stage nudge from an ending reflection and show pending, withheld and failed states. Voice requires an explicit join; speaking indicators reflect local audio levels, unlike the decorative waiting-room signal. Keep mute, leave, microphone consent and the restrictive-network warning visible. Voice status must never imply that audio is recorded or sent to AI.
 
-Global keyboard focus uses a 3px lime outline with a 5px offset; source links on paper use a blue outline. Reduced-motion preference disables animations and transitions throughout. Errors include readable text and an alert role; connection and completion notices carry status semantics.
+Global keyboard focus uses a 2px current-color outline with a 3px offset. Reduced-motion preference disables animations and transitions throughout. Errors include readable text and an alert role; connection and completion notices carry status semantics.
 
 ## Do's and Don'ts
 
@@ -213,3 +213,7 @@ Global keyboard focus uses a 3px lime outline with a 5px offset; source links on
 - Don't turn compact document metadata into decorative headings above every section.
 - Don't replace the listening station with a generic dashboard or chat-only composition.
 - Don't require generated scene mockups or raster decoration to extend this code-built world.
+
+## Shared control conventions
+
+Use restrained, low-saturation accents on the existing paper or slate surfaces. Buttons use 4px vertical and 8px horizontal padding, a 4px corner radius, a 6px content gap, and 16px icons. Preserve readable labels and visible keyboard focus. The shared rules live in `controls.css`; illustrations retain their natural dimensions.

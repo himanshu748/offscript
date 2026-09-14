@@ -1,0 +1,30 @@
+/* Shared compact controls across the four projects. These deliberate overrides
+   keep component rules and utility classes from changing the agreed dimensions. */
+:root {
+  --control-padding-y: 4px;
+  --control-padding-x: 8px;
+  --control-icon-size: 16px;
+  --control-radius: 4px;
+  --control-gap: 6px;
+}
+:is(button, a.button, a.action-primary, a.action-text, a.lp-cta, a.lp-cta-quiet, a[role="button"]) {
+  padding: var(--control-padding-y) var(--control-padding-x) !important;
+  min-height: 28px !important;
+  height: auto;
+  line-height: 20px;
+  gap: var(--control-gap) !important;
+  border-radius: var(--control-radius) !important;
+}
+:is(button, a.button, a.action-primary, a.action-text, a.lp-cta, a.lp-cta-quiet, a[role="button"]) svg,
+svg.lucide {
+  width: var(--control-icon-size) !important;
+  height: var(--control-icon-size) !important;
+  flex-shrink: 0;
+}
+:is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(button, a, input, select, textarea) { transition: none !important; }
+}

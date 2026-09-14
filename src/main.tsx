@@ -10,6 +10,7 @@ import "@fontsource/manrope/latin-600.css";
 import "@fontsource/manrope/latin-700.css";
 import App from "./App";
 import "./styles.css";
+import "./controls.css";
 
 class Boundary extends React.Component<
   { children: React.ReactNode },

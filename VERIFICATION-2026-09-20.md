@@ -1,6 +1,6 @@
 # September 20 verification
 
-Scope: local frontend at port 5187 against the cloud development backend. Production is unchanged. Two isolated Chromium identities were controlled by automation, not independent human players. No private invitation URL, recipient code or production solution is included here.
+Scope: local frontend at port 5187 against the cloud development backend, followed by an approved production deployment and public smoke check. Two isolated Chromium identities were controlled by automation, not independent human players. No private invitation URL, recipient code or production solution is included here.
 
 ## Observed browser results
 
@@ -36,4 +36,5 @@ The output filter is a narrow check, not a general factual or prompt-injection g
 - Responsive visual checks: passed at 360, 390, 768 and 1440 pixels for solo practice; the transformed multiplayer desk was additionally inspected at 390 and 1440 pixels.
 - Impeccable visual audit: clean after replacing the remaining partial-border tabs and widening the active investigation into a readable two-column workspace. The final demo uses only shared-room states; private invitations, private projections and solution entry stay off camera.
 - New narrated demo: complete at 152.86 seconds, 1920×1080, 30 fps, H.264/AAC. The audio has no detected silence longer than 1.5 seconds at −40 dB. Local file: `../videos/offscript-evidence-2026-09-20/OFFSCRIPT-demo-2026-09-20.mp4`.
-- Production deployment and public submission changes: not performed in this pass.
+- Production deployment: complete. Convex backend `flexible-kiwi-480` accepted the new indexes without deleting any; static deployment `25dec9c5-4150-44ad-ad30-912628c4faa7` published assets `index-ChV7xBzv.js` and `index-CG_UDNFw.css`. The public root returned HTTP 200 and the source-backed library, solo-practice action and expanded landing layout appeared in a fresh Comet check.
+- Public Vibe Apps entry and Drive video replacement: handled separately from code deployment and recorded only after their live save/readback succeeds.

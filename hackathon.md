@@ -1,5 +1,17 @@
 # OFFSCRIPT — Convex All Gas build log
 
+## September 20, 2026: guided practice, source-backed briefs and wider investigation desk
+
+Added a separate solo guided-practice path for a lone evaluator. It labels its partner as scripted, uses tutorial-only clues, creates no multiplayer identity or score, and teaches sharing through one wrong answer, a free tutorial hint and a short explanation. The real case still requires two authenticated seats, server-owned clues and consensus.
+
+Expanded the active case into a wider two-column investigation workspace with a persistent next action, larger evidence cards and a clearer decision state. Added a landing-page source library. Firecrawl supplies a dated receipt from the two fixed NASA pages; OpenAI can draft only the player-facing title, instruction, prompt and hint; Convex recomputes the answer from canonical source definitions, rejects leaked solutions and snapshots an accepted pack for future rooms. Generation happens outside live rooms, shares the existing forty-AI-turn daily cap and has no provider fallback. The authored opening remains available when generation fails.
+
+Verification: 28 engine/narrative tests and 63 Convex tests passed (91 total), along with TypeScript and the production build. Two isolated browser identities completed a full case, kept conflicting ending votes open until consensus, restored state after reload and exercised chat, expiry, denied microphone access and one authorized provider/debrief loop. The automated pair is not a human playtest. Three real-pair blind trials remain pending under `PLAYTEST-PROTOCOL.md`.
+
+The first live development compiler attempt used one authorized AI turn but was rejected before publication by an overly strict receipt comparison. The comparison was fixed and deployed; no unapproved retry was made. Fixture coverage proves the corrected publication path, but a successful live generated pack remains pending and the public library honestly shows the authored baseline until then.
+
+Production release: deployed the backend to `flexible-kiwi-480` without deleting indexes, then published frontend deployment `25dec9c5-4150-44ad-ad30-912628c4faa7` at https://flexible-kiwi-480.convex.site/. The public root returned HTTP 200 with assets `index-ChV7xBzv.js` and `index-CG_UDNFw.css`; a fresh Comet check displayed the source-backed library, solo-practice action and transformed landing page. The new narrated demo is 152.86 seconds at 1920×1080 and excludes invitation links, private projections and solution entry.
+
 ## September 12, 2026: public submission listing
 
 Verified OFFSCRIPT's [public Vibe Apps listing](https://vibeapps.dev/s/offscript) through the signed-in [author profile](https://vibeapps.dev/himanshu748). Corrected the README's obsolete submission status. This check establishes that the listing is public; judging eligibility and results remain unverified. Earlier build-log entries retain their historical submission status.

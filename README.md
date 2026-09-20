@@ -12,7 +12,7 @@ OFFSCRIPT has a [public Vibe Apps listing](https://vibeapps.dev/s/offscript), ve
 
 ## Realtime and replay
 
-The September 20 development build adds **solo guided practice**, a separate, explicitly scripted tutorial for a lone evaluator. It creates no multiplayer room, player identity or score, and uses tutorial-only clues. The two-player untimed case still requires a real partner. These changes have been tested on the development deployment; production has not yet been updated. See [verification evidence](VERIFICATION-2026-09-20.md).
+The September 20 production build adds **solo guided practice**, a separate, explicitly scripted tutorial for a lone evaluator. It creates no multiplayer room, player identity or score, and uses tutorial-only clues. The two-player untimed case still requires a real partner. The source-backed case library and expanded investigation workspace are live on the public Convex deployment. See [verification evidence](VERIFICATION-2026-09-20.md).
 
 New rooms default to **Signal window**: both players ready up before evidence opens, then share an eight-minute server-enforced deadline. Finish all three challenges and agree on an ending before it closes. A scheduled mutation ends idle attempts; every gameplay mutation independently checks the deadline. Reloads, device-clock changes and disconnects cannot extend it. The visible counter is an estimate anchored to server time; the server decides whether an action was on time. No forced flashing or sound is used. Practice mode is untimed, and existing rooms are not retroactively timed.
 

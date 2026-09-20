@@ -8,7 +8,7 @@ Source: [himanshu748/offscript](https://github.com/himanshu748/offscript), publi
 
 New rooms contain a three-challenge cooperative case. Recover the dispatch, decode a room-specific cipher, cross-check altered relay logs, then agree on one of two endings. A source-backed case compiler can add a second opening assignment: Firecrawl supplies a fresh receipt, OpenAI drafts only the player-facing brief, and Convex recomputes the answer, rejects leaks and freezes the pack before a room uses it. An opt-in AgentMail debrief follows the ending; inbound email does not unlock gameplay.
 
-OFFSCRIPT has a [public Vibe Apps listing](https://vibeapps.dev/s/offscript), verified on September 12, 2026. Judging eligibility and results remain unverified.
+OFFSCRIPT has a [public Vibe Apps listing](https://vibeapps.dev/s/offscript), rechecked on September 20, 2026. Its [public 152.86-second demo](https://drive.google.com/file/d/1oCSR-ZezcXE7-KGd8ocpVDYaNc-yos20/view) was replaced in place on the same submission URL. Judging eligibility and results remain unverified.
 
 ## Realtime and replay
 

@@ -11,6 +11,7 @@
 import type * as accountLinking from "../accountLinking.js";
 import type * as accounts from "../accounts.js";
 import type * as auth from "../auth.js";
+import type * as casePacks from "../casePacks.js";
 import type * as caseServices from "../caseServices.js";
 import type * as caseWorkers from "../caseWorkers.js";
 import type * as http from "../http.js";
@@ -20,6 +21,7 @@ import type * as presence from "../presence.js";
 import type * as recovery from "../recovery.js";
 import type * as recoveryMail from "../recoveryMail.js";
 import type * as rooms from "../rooms.js";
+import type * as serviceLimits from "../serviceLimits.js";
 import type * as servicePolicy from "../servicePolicy.js";
 import type * as validators from "../validators.js";
 import type * as voice from "../voice.js";
@@ -35,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   accountLinking: typeof accountLinking;
   accounts: typeof accounts;
   auth: typeof auth;
+  casePacks: typeof casePacks;
   caseServices: typeof caseServices;
   caseWorkers: typeof caseWorkers;
   http: typeof http;
@@ -44,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   recovery: typeof recovery;
   recoveryMail: typeof recoveryMail;
   rooms: typeof rooms;
+  serviceLimits: typeof serviceLimits;
   servicePolicy: typeof servicePolicy;
   validators: typeof validators;
   voice: typeof voice;

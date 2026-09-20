@@ -1,20 +1,21 @@
-/* Shared compact controls across the four projects. These deliberate overrides
-   keep component rules and utility classes from changing the agreed dimensions. */
+/* Accessible control floor. Individual surfaces may grow from here, but the
+   game never compresses its primary actions below a comfortable tap target. */
 :root {
-  --control-padding-y: 4px;
-  --control-padding-x: 8px;
+  --control-padding-y: 10px;
+  --control-padding-x: 14px;
   --control-icon-size: 16px;
   --control-radius: 4px;
   --control-gap: 6px;
 }
 :is(button, a.button, a.action-primary, a.action-text, a.lp-cta, a.lp-cta-quiet, a[role="button"]) {
-  padding: var(--control-padding-y) var(--control-padding-x) !important;
-  min-height: 28px !important;
+  padding: var(--control-padding-y) var(--control-padding-x);
+  min-height: 44px;
   height: auto;
   line-height: 20px;
   gap: var(--control-gap) !important;
   border-radius: var(--control-radius) !important;
 }
+.wordmark, .back-link { min-height: 44px; padding-inline: 0; }
 :is(button, a.button, a.action-primary, a.action-text, a.lp-cta, a.lp-cta-quiet, a[role="button"]) svg,
 svg.lucide {
   width: var(--control-icon-size) !important;

@@ -1,12 +1,20 @@
 import { defineSchema, defineTable } from "convex/server";
 import { authTables } from "@convex-dev/auth/server";
 import { v } from "convex/values";
-import { gameState } from "./validators";
+import { clue, gameState } from "./validators";
 import { serviceStatus, sourceEvidence } from "./servicePolicy";
 import { vOutboundId } from "@agentmail/convex";
 import { nullablePeer } from "./voiceTypes";
 export default defineSchema({
   ...authTables,
+  casePacks: defineTable({
+    packKey: v.string(), title: v.string(), criterion: v.union(v.literal("earlier"), v.literal("later")),
+    prompt: v.string(), hint: v.string(), clues: v.object({ archivist: clue, operator: clue }),
+    solution: v.object({ mission: v.string(), launchDate: v.string() }),
+    sourceReceiptKey: v.string(), createdAt: v.number(), published: v.boolean(),
+  }).index("by_packKey", ["packKey"]).index("by_published", ["published"]),
+  publicSourceReceipts: defineTable({ key: v.string(), sources: v.array(sourceEvidence), checkedAt: v.number() }).index("by_key", ["key"]),
+  debriefRecipients: defineTable({ userId: v.id("users"), email: v.optional(v.string()), pendingEmail: v.optional(v.string()), hash: v.optional(v.string()), expiresAt: v.optional(v.number()) }).index("by_userId", ["userId"]),
   teamMessages: defineTable({
     roomId: v.id("rooms"),
     userId: v.id("users"),
@@ -22,6 +30,7 @@ export default defineSchema({
     sourceStatus: serviceStatus, sourceAttempts: v.number(), sources: v.array(sourceEvidence), sourceError: v.optional(v.string()),
     aiStatus: serviceStatus, aiAttempts: v.number(), threadId: v.optional(v.string()), aiError: v.optional(v.string()),
     visibleAIIds: v.optional(v.array(v.string())),
+    aiStage: v.optional(v.number()), aiPhase: v.optional(v.string()),
   }).index("by_roomId", ["roomId"]),
   caseMail: defineTable({ roomId: v.id("rooms"), userId: v.id("users"), outboundId: vOutboundId, consentAt: v.number() })
     .index("by_roomId_and_userId", ["roomId", "userId"]),

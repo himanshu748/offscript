@@ -147,9 +147,18 @@ export const join = mutation({
       throw new ConvexError(
         "This invitation has expired. Ask your partner to create another room.",
       );
+    const generated = await ctx.db.query("casePacks").withIndex("by_published", q => q.eq("published", true)).order("desc").take(6);
+    const checksum = [...String(room._id)].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    // Once a validated pack exists, new rooms use one of those immutable
+    // snapshots. The authored baseline remains the provider-independent path
+    // when the library is empty.
+    const selected = generated.length ? generated[checksum % generated.length] : null;
+    const openingPack = selected ? { packKey: selected.packKey, title: selected.title,
+      provenance: "firecrawl-openai-validated" as const, prompt: selected.prompt, hint: selected.hint,
+      clues: selected.clues, solution: selected.solution } : null;
     await ctx.db.patch(room._id, {
       guestId: userId,
-      state: createCase({ archivist: room.hostId, operator: userId }, room._id, room.timed ?? false),
+      state: createCase({ archivist: room.hostId, operator: userId }, room._id, room.timed ?? false, openingPack),
     });
     return room._id;
   },

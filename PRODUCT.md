@@ -21,14 +21,18 @@ Players can also compare clues in private team text chat. The latest 100 message
 | Technology | Actual work |
 | --- | --- |
 | Convex | Authenticated identity, private role views, transactional puzzle state, reactive multiplayer, presence, deadlines, friends, WebRTC signaling and frontend hosting. Original Convex Auth package, not Auth v2. |
-| OpenAI | Mara's room-local dialogue, stage nudges and ending reflections through Convex Agent and a pinned OpenAI model via Vercel AI Gateway. Shared context only; no authority over puzzle truth or outcomes. |
-| Firecrawl | Checks two fixed NASA Voyager pages and pins validated historical evidence with source receipts per case. |
+| OpenAI | Mara's room-local dialogue, stage nudges and ending reflections through Convex Agent, plus bounded player-facing drafting for the source-backed case compiler. Shared context only; no authority over puzzle truth, answer keys or outcomes. |
+| Firecrawl | Checks two fixed NASA Voyager pages, pins validated historical evidence and supplies a fresh public receipt to the case compiler. |
 | AgentMail | Account verification, password recovery and an explicitly requested post-ending debrief to the player's verified address. No inbound email unlock. |
 | Codex | Implementation, debugging and verification; not the in-game character model. |
 
 Source checks allow two attempts per case and ten per deployment daily window. AI allows six attempts per case and forty per daily window. Debriefs allow one per player/case and ten per daily window. Failed attempts count. No provider fallback or invented success receipts. See README.md for timeouts and setup.
 
 ## Boundaries and open work
+
+## Source-backed case library · September 20 build brief
+
+Target: friends and lone judges who want a short cooperative mystery with a different opening problem on replay. Firecrawl supplies allowlisted, verified public facts; OpenAI drafts the title, operator instruction, prompt and hint; Convex computes the answer from the verified facts, validates the pack and publishes an immutable snapshot for future rooms. Generation happens outside active rooms, so a provider failure cannot interrupt play. The first compiler supports the two validated Voyager chronology variants; arbitrary URLs, generated testimony, generated endings and model-authored answer keys are excluded. The demo should show the library provenance, two different opening briefs, the shared-clue insight and the authored consensus ending. The risky assumption is whether two source-backed variants add enough replay value before broader source pairs are added.
 
 The original proposal included an inbound character email that unlocked the ending. That was not shipped. New cases use deterministic puzzle validation; legacy rooms retain their old unavailable gate and should be replaced with a fresh room.
 

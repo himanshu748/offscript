@@ -4,6 +4,7 @@ import usePresence from "@convex-dev/presence/react";
 import {
   useConvexAuth,
   useConvexConnectionState,
+  useAction,
   useMutation,
   useQuery,
 } from "convex/react";
@@ -31,6 +32,7 @@ import { PlayerPanel, type PublicPlayer } from "./PlayerPanel";
 import { CaseServices } from "./CaseServices";
 import { VoiceCall } from "./VoiceCall";
 import { TeamChat } from "./TeamChat";
+import { SoloPractice } from "./SoloPractice";
 
 function storedRoom() {
   try {
@@ -262,11 +264,14 @@ function RolePreview() {
 }
 
 export default function App() {
+  const [soloPractice, setSoloPractice] = useState(false);
   const { isAuthenticated, isLoading } = useConvexAuth();
   const connection = useConvexConnectionState();
   const { signIn } = useAuthActions();
   const createRoom = useMutation(api.rooms.create);
   const joinRoom = useMutation(api.rooms.join);
+  const generateCasePack = useAction(api.casePacks.generate);
+  const caseLibrary = useQuery(api.casePacks.library);
   const [roomId, setRoomId] = useState<Id<"rooms"> | null>(() =>
     location.hash.startsWith("#join=") ? null : storedRoom(),
   );
@@ -277,6 +282,9 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [timed, setTimed] = useState(true);
   const [error, setError] = useState("");
+  const [packNotice, setPackNotice] = useState("");
+  const [packBusy, setPackBusy] = useState(false);
+  const [generationPending, setGenerationPending] = useState(false);
   const actionRunning = useRef(false);
   const createArgs = useRef({
     inviteToken: crypto.randomUUID(),
@@ -341,8 +349,29 @@ export default function App() {
       }
     })();
   }, [pending, isAuthenticated, createRoom, joinRoom, invite, timed]);
+  useEffect(() => {
+    if (!generationPending || !isAuthenticated || packBusy) return;
+    setGenerationPending(false);
+    setPackBusy(true);
+    void generateCasePack({})
+      .then(result => setPackNotice(result.message))
+      .catch(error => setPackNotice(errorText(error)))
+      .finally(() => setPackBusy(false));
+  }, [generationPending, isAuthenticated, packBusy, generateCasePack]);
+
+  async function buildCasePack() {
+    setPackNotice("");
+    if (!isAuthenticated) {
+      setGenerationPending(true);
+      try { await signIn("anonymous"); }
+      catch (error) { setGenerationPending(false); setPackNotice(errorText(error)); }
+      return;
+    }
+    setGenerationPending(true);
+  }
 
   const active = Boolean(roomId);
+  if (soloPractice) return <div className="app"><SoloPractice onExit={() => setSoloPractice(false)} /></div>;
   return (
     <div className={`app ${active ? "in-case" : ""}`}>
       <a className="skip-link" href="#main">
@@ -354,6 +383,7 @@ export default function App() {
           onClick={() => {
             setRoomId(null);
             setError("");
+            setPackNotice("");
           }}
           aria-label="OFFSCRIPT home"
         >
@@ -478,9 +508,10 @@ export default function App() {
               <div className="entry-controls">
                 {!invite && <div className="mode-picker" role="group" aria-label="Choose a game mode">
                   <button aria-pressed={timed} disabled={busy} onClick={() => setTimed(true)}>Signal window · 8 min</button>
-                  <button aria-pressed={!timed} disabled={busy} onClick={() => setTimed(false)}>Practice · no timer</button>
+                  <button aria-pressed={!timed} disabled={busy} onClick={() => setTimed(false)}>Two-player untimed case</button>
                 </div>}
-                {!invite && <p className="session-note">{timed ? "Both players ready up. Solve the case and agree on an ending before the eight-minute signal closes." : "Same puzzles, no countdown. Take your time learning the two roles."}</p>}
+                {!invite && <p className="session-note">{timed ? "Invite one friend, then both players ready up. The eight-minute clock continues during chat, hints and optional provider requests." : "Two real players, same puzzles, no countdown. Invite one friend to the other desk."}</p>}
+                {!invite && <button disabled={busy} onClick={() => setSoloPractice(true)}>Here alone? Try solo guided practice · scripted partner</button>}
                 {invite && (
                   <p className="invite-intro">
                     Join as the operator. Your partner’s clue stays private
@@ -576,13 +607,33 @@ export default function App() {
               </p>
             </div>
           </section>
+          <section className="case-library" aria-labelledby="case-library-title">
+            <div className="library-intro">
+              <span className="eyebrow">SOURCE-BACKED CASE LIBRARY</span>
+              <h2 id="case-library-title">The facts stay fixed. The assignment can change.</h2>
+              <p>
+                Firecrawl checks two allowlisted NASA pages. AI drafts a new player-facing assignment from that receipt. Convex recomputes the answer from the verified dates, rejects leaks, and freezes the pack before any room can use it.
+              </p>
+              <p className="library-boundary">Generation happens outside live rooms. A provider failure never interrupts the deterministic game.</p>
+            </div>
+            <div className="library-status">
+              <div className="library-count"><strong>{caseLibrary?.total ?? 1}</strong><span>opening {caseLibrary?.total === 1 ? "brief" : "briefs"}</span></div>
+              <ol aria-label="Available opening briefs">
+                {(caseLibrary?.packs ?? [{ title: "First departure", provenance: "Authored baseline" }]).map(pack => <li key={`${pack.title}-${pack.provenance}`}><strong>{pack.title}</strong><span>{pack.provenance}</span></li>)}
+              </ol>
+              <button className="primary" disabled={packBusy || generationPending || caseLibrary?.generated === 1} onClick={() => void buildCasePack()}>
+                {packBusy || generationPending ? <><LoaderCircle className="spin" size={16} /> Building validated brief…</> : caseLibrary?.generated === 1 ? <><Check size={16} /> Source-backed brief ready</> : "Build the next source-backed brief"}
+              </button>
+              <p className="service-note">
+                {caseLibrary?.sourceReady ? `Fresh Firecrawl receipt checked ${new Date(caseLibrary.checkedAt!).toLocaleString()}. One AI turn will be used.` : "First finish an opening case and run its live source check. The authored brief is always available."}
+              </p>
+              {packNotice && <p className="library-notice" role="status">{packNotice}</p>}
+            </div>
+          </section>
           <aside className="build-note">
-            <span className="build-tag">THREE-CHALLENGE CASE</span>
+            <span className="build-tag">THREE-CHALLENGE CASES</span>
             <p>
-              New rooms change the cipher and relay evidence. Solve all three
-              challenges, then agree on an ending. Optional NASA source checks
-              and an AI archivist help you examine shared evidence. Email a
-              debrief to your verified address after the case ends.
+              New rooms use a validated opening brief when one is published, then change the cipher and relay evidence. Solve all three challenges and agree on an ending. Optional source checks and Mara help you examine shared evidence. Email a debrief only after the case ends.
             </p>
           </aside>
         </main>
@@ -646,7 +697,7 @@ function WaitingRoom({
             {copyError ||
               (copied
                 ? "Copied. Send it to one friend."
-                : `One seat only. Invitation expires ${new Date(expiresAt).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}.`)}
+                : `Next: copy this link and send it privately to one friend. They open it in their own browser and choose “Take the operator’s seat”. Invitation expires ${new Date(expiresAt).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}.`)}
           </p>
         </div>
         <div className="privacy-note">
@@ -768,6 +819,7 @@ function Desk({
             Your desk: <strong>{view.role}</strong>
             <span>Two players · shared case</span>
           </p>
+          {view.pack && <p className="pack-badge"><Radio size={14} /> Opening brief: {view.pack.title}<span>source-backed snapshot</span></p>}
         </div>
         <div className="phase">
           <i />
@@ -1003,7 +1055,7 @@ function Desk({
               {view.story?.outcome && <p><strong>{view.story.outcome.cost}</strong></p>}
               {view.challenge && <>
                 <p>Three challenges solved. Team score: {view.challenge.score}/100.
-                  New rooms vary the cipher and relay, not the dispatch warm-up.</p>
+                  New rooms can open with a validated source-backed assignment and always vary the cipher and relay.</p>
                 <button className="primary" disabled={!connected} onClick={onReplay}>Replay with new codes <RotateCcw size={16} /></button>
                 <p className="field-hint">Creates a new room and invitation. Your partner must join again. Five rooms per guest per day.</p>
               </>}

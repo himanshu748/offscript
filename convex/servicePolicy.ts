@@ -12,10 +12,12 @@ export const NASA_SOURCES = [
 
 export function mayConsult(state: GameState) {
   if (state.clock && !state.clock.deadline) return false;
+  if (state.phase !== "resolved" && (state.clock?.expired || (state.clock?.deadline && state.clock.deadline <= Date.now()))) return false;
   return state.contributed.length === 2 || state.phase === "decision" || state.phase === "resolved";
 }
 export function mayReadSources(state: GameState) {
-  return mayConsult(state) || (state.challenge?.index ?? 0) > 0;
+  // Previously shared source receipts stay readable after expiry.
+  return state.contributed.length === 2 || state.phase === "decision" || state.phase === "resolved" || (state.challenge?.index ?? 0) > 0;
 }
 // Start from the same public projection the players see. Never serialize state,
 // seeds, private clues, pending votes, user IDs, or the server's answer key.
@@ -41,7 +43,7 @@ export function questionText(value: string) {
 export function validateCharacterReply(text: string) {
   // This is a narrow output boundary, not a general fact checker. Keep the
   // dispatch's historical names/dates in the cited documents, not AI narration.
-  if (!text.trim() || text.length > 1400 || /voyager|\b1977\b|\b(?:aug(?:ust)?|sept?(?:ember)?)\b|\bmission\s*(?:one|two|1|2)\b/i.test(text))
+  if (!text.trim() || text.length > 1400 || /voyager|\b\d{3,}\b|\b(?:aug(?:ust)?|sept?(?:ember)?)\b|\bmission\s*(?:one|two|1|2)\b|\b(?:answer|code|solution)\s*(?:is|:|=)|\b(?:select|choose|use)\s+(?:the\s+)?relay\s+[a-z0-9]/i.test(text))
     throw new Error("Reply outside the reasoning-only boundary");
   return text;
 }

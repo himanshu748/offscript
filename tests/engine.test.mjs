@@ -30,6 +30,28 @@ test("private projections expose only the assigned clue", () => {
   assert.equal("players" in a, false);
   assert.equal("operations" in a, false);
 });
+
+test("a generated opening pack is snapshotted without exposing its answer", () => {
+  const openingPack = {
+    packKey: "fixture-pack", title: "The second wake", provenance: "firecrawl-openai-validated",
+    prompt: "Find the later departure.", hint: "Compare dates.",
+    clues: {
+      archivist: { id: "fact", title: "Manifest", kind: "historical-facts", text: "Two dated records.", sources: [] },
+      operator: { id: "route", title: "Order", kind: "fictional-clue", text: "Choose the later departure.", sources: [] },
+    },
+    solution: { mission: "voyager1", launchDate: "1977-09-05" },
+  };
+  const state = createCase(players, "pack-room", false, openingPack);
+  const archivist = viewFor(state, players.archivist);
+  const operator = viewFor(state, players.operator);
+  assert.deepEqual(archivist.pack, { title: "The second wake", provenance: "firecrawl-openai-validated" });
+  assert.equal(archivist.privateClue.id, "fact");
+  assert.equal(operator.privateClue.id, "route");
+  assert.ok(!JSON.stringify(archivist).includes("1977-09-05"));
+  assert.ok(!JSON.stringify(operator).includes("1977-09-05"));
+  openingPack.clues.archivist.text = "mutated";
+  assert.equal(viewFor(state, players.archivist).privateClue.text, "Two dated records.");
+});
 test("outsiders cannot view or act", () => {
   assert.throws(() => viewFor(fresh(), "outsider"));
   assert.throws(() => applyPlayerAction(fresh(), "outsider", "x", { type: "contribute" }));

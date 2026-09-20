@@ -6,7 +6,7 @@ function requireThat(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-export function createCase(players, seed, timed = false) {
+export function createCase(players, seed, timed = false, openingPack = null) {
   requireThat(players && roles.every((r) => typeof players[r] === "string" && players[r].trim()), "Two player identities are required.");
   requireThat(players.archivist !== players.operator, "Each role requires a different player.");
   return {
@@ -14,6 +14,7 @@ export function createCase(players, seed, timed = false) {
     revision: 0, phase: "investigating", contributed: [], votes: {}, ending: null,
     pendingRequest: null, receipt: null, journal: [], operations: [],
     ...(seed ? { challenge: { seed, index: 0, mistakes: 0, hints: [] } } : {}),
+    ...(openingPack ? { openingPack: structuredClone(openingPack) } : {}),
     ...(timed ? { clock: { ready: [], deadline: null, expired: false, finishedAt: null } } : {}),
   };
 }
@@ -27,9 +28,11 @@ function roleOf(state, actorId) {
 // The transport must derive actorId from authenticated membership, never request JSON.
 export function viewFor(state, actorId) {
   const role = roleOf(state, actorId);
-  const currentClues = state.challenge ? challengeFor(state.challenge.seed, Math.min(state.challenge.index, 2)).clues : clues;
+  const currentClues = state.challenge?.index === 0 && state.openingPack ? state.openingPack.clues
+    : state.challenge ? challengeFor(state.challenge.seed, Math.min(state.challenge.index, 2)).clues : clues;
   return structuredClone({
     caseId: state.caseId, role, revision: state.revision, phase: state.phase,
+    pack: state.openingPack ? { title: state.openingPack.title, provenance: state.openingPack.provenance } : null,
     privateClue: state.clock && !state.clock.deadline ? { id: "sealed", title: "Sealed evidence", kind: "fictional-clue", text: "Both players must press Ready before the evidence opens and the eight-minute signal window begins.", sources: [] } : currentClues[role],
     clock: state.clock ?? null,
     sharedClues: state.contributed.map((r) => currentClues[r]),
@@ -126,7 +129,8 @@ export function applyPlayerAction(state, actorId, operationId, action, now = Dat
     requireThat(next.contributed.length === 2, "Both players must share their clue first.");
     requireThat(typeof action.mission === "string" && action.mission.length <= 80 && typeof action.launchDate === "string" && action.launchDate.length <= 32, "Provide a mission and ISO launch date.");
     const mission = action.mission.toLowerCase().replace(/[\s-]/g, "");
-    if (mission !== solution.mission || action.launchDate.trim() !== solution.launchDate) {
+    const expected = next.openingPack?.solution ?? solution;
+    if (mission !== expected.mission || action.launchDate.trim() !== expected.launchDate) {
       if (next.challenge) next.challenge.mistakes += 1;
       note(next, "The proposed dispatch does not fit both clues. Recheck the manifest together.");
     } else if (next.challenge) {

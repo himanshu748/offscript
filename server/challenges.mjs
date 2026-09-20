@@ -45,7 +45,7 @@ export function challengeFor(seed, index) {
 export function challengeView(state) {
   if (!state.challenge) return null;
   const { seed, index, mistakes, hints } = state.challenge;
-  const puzzle = challengeFor(seed, Math.min(index, 2));
+  const puzzle = index === 0 && state.openingPack ? state.openingPack : challengeFor(seed, Math.min(index, 2));
   return {
     index, total: 3, title: puzzle.title, prompt: puzzle.prompt,
     mistakes, hintsUsed: hints.length,

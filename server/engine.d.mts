@@ -21,9 +21,19 @@ export interface Clue {
   text: string;
   sources: Source[];
 }
+export interface OpeningPack {
+  packKey: string;
+  title: string;
+  provenance: "firecrawl-openai-validated";
+  prompt: string;
+  hint: string;
+  clues: Record<Role, Clue>;
+  solution: { mission: string; launchDate: string };
+}
 export interface GameState {
   clock?: Clock;
   challenge?: { seed: string; index: number; mistakes: number; hints: number[] };
+  openingPack?: OpeningPack;
   caseId: string;
   players: Record<Role, string>;
   revision: number;
@@ -37,6 +47,7 @@ export interface GameState {
   operations: { id: string; fingerprint: string }[];
 }
 export interface PlayerView {
+  pack: { title: string; provenance: string } | null;
   story?: import("./story.mjs").StoryView | null;
   clock: Clock | null;
   challenge: { index: number; total: number; title: string; prompt: string; mistakes: number; hintsUsed: number; hint: string | null; score: number } | null;
@@ -54,7 +65,7 @@ export interface PlayerView {
   timeline: { revision: number; text: string }[];
 }
 export interface Clock { ready: Role[]; deadline: number | null; expired: boolean; finishedAt: number | null }
-export function createCase(players: Record<Role, string>, seed?: string, timed?: boolean): GameState;
+export function createCase(players: Record<Role, string>, seed?: string, timed?: boolean, openingPack?: OpeningPack | null): GameState;
 export function expireCase(state: GameState, now: number): GameState;
 export function viewFor(state: GameState, actorId: string): PlayerView;
 export function applyPlayerAction(

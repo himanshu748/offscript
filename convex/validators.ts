@@ -9,7 +9,7 @@ export const phase = v.union(
   v.literal("resolved"),
 );
 const journal = v.array(v.object({ revision: v.number(), text: v.string() }));
-const clue = v.object({
+export const clue = v.object({
   id: v.string(),
   title: v.string(),
   kind: v.string(),
@@ -18,9 +18,19 @@ const clue = v.object({
     v.object({ title: v.string(), url: v.string(), launchDate: v.string() }),
   ),
 });
+export const openingPack = v.object({
+  packKey: v.string(),
+  title: v.string(),
+  provenance: v.literal("firecrawl-openai-validated"),
+  prompt: v.string(),
+  hint: v.string(),
+  clues: v.object({ archivist: clue, operator: clue }),
+  solution: v.object({ mission: v.string(), launchDate: v.string() }),
+});
 export const gameState = v.object({
   clock: v.optional(clock),
   challenge: v.optional(v.object({ seed: v.string(), index: v.number(), mistakes: v.number(), hints: v.array(v.number()) })),
+  openingPack: v.optional(openingPack),
   caseId: v.string(),
   players: v.object({ archivist: v.string(), operator: v.string() }),
   revision: v.number(),
@@ -43,6 +53,7 @@ export const gameState = v.object({
   operations: v.array(v.object({ id: v.string(), fingerprint: v.string() })),
 });
 export const playerView = v.object({
+  pack: v.union(v.null(), v.object({ title: v.string(), provenance: v.string() })),
   story: v.optional(v.union(v.null(), v.object({ recovered: v.number(), next: v.string(), passages: v.array(v.object({ title: v.string(), text: v.string() })), outcome: v.union(v.null(), v.object({ title: v.string(), text: v.string(), cost: v.string() })) }))),
   clock: v.union(v.null(), clock),
   challenge: v.union(v.null(), v.object({ index: v.number(), total: v.number(), title: v.string(), prompt: v.string(), mistakes: v.number(), hintsUsed: v.number(), hint: v.union(v.null(), v.string()), score: v.number() })),
